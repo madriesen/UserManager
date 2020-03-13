@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth\Registration;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\MemberRequestApprovelRequest;
+use App\Http\Requests\MemberRequestAnswerRequest;
 use App\Http\Requests\memberRequestRequest;
 use App\MemberRequest;
 
@@ -21,7 +21,7 @@ class MemberRequestController extends Controller
         return response()->json(['data' => ['email' => $email, 'member_request' => $member_request]]);
     }
 
-    public function approve(MemberRequestApprovelRequest $request)
+    public function approve(MemberRequestAnswerRequest $request)
     {
         $id = $request->id;
 
@@ -35,7 +35,7 @@ class MemberRequestController extends Controller
     }
 
 
-    public function refuse(MemberRequestApprovelRequest $request)
+    public function refuse(MemberRequestAnswerRequest $request)
     {
         $id = $request->id;
 
