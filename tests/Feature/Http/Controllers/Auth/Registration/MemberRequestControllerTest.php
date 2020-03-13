@@ -46,14 +46,14 @@ class MemberRequestControllerTest extends TestCase
 
 
     /** @test */
-    public function after_request_a_request_is_added_to_the_database()
+    public function after_a_meber_request_a_member_request_is_added_to_the_database()
     {
         $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
         $this->assertDatabaseHas('member_requests', ['id' => 1]);
     }
 
     /** @test */
-    public function after_request_an_email_is_added_to_the_database()
+    public function after_a_member_request_an_email_is_added_to_the_database()
     {
         $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
 
@@ -65,5 +65,27 @@ class MemberRequestControllerTest extends TestCase
     {
         $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
         $this->assertTrue(Email::first()->member_request->id == 1);
+    }
+
+    /**  @test */
+    public function a_member_request_can_be_approved()
+    {
+        $response = $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
+
+        $response = $this->post(route('approveMemberRequest'), ['id' => $response["data"]["member_request"]["id"]]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['data' => ['member_request']]);
+    }
+
+    /** @test */
+    public function a_member_request_can_be_denied()
+    {
+        $response = $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
+
+        $response = $this->post(route('denyMemberRequest'), ['id' => $response["data"]["member_request"]["id"]]);
+
+        $response->assertStatus(200);
+        $response->assertJsonStructure(['data' => ['member_request']]);
     }
 }

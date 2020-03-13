@@ -20,4 +20,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::group(['namespace'=>'auth\registration', 'middleware' => 'api'], function(){
     Route::post('/memberRequest', 'MemberRequestController')->name('memberRequest');
+    Route::post('/approveMemberRequest', 'MemberRequestController@approve')->name('approveMemberRequest');
+    Route::post('/denyMemberRequest', 'MemberRequestController@deny')->name('denyMemberRequest');
 });
