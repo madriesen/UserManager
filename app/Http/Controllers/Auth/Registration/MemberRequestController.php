@@ -36,12 +36,12 @@ class MemberRequestController extends Controller
     }
 
 
-    public function deny(MemberRequestApprovelRequest $request)
+    public function refuse(MemberRequestApprovelRequest $request)
     {
         $id = $request->id;
 
         try {
-            MemberRequest::find($id)->deniedAt = time();
+            MemberRequest::find($id)->refusedAt = time();
         } catch (Error $e) {
             return response()->json(['error' => ['message' => 'could not update approve time']]);
         }

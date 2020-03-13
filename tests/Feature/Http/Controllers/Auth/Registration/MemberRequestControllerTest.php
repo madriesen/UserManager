@@ -3,9 +3,7 @@
 namespace Tests\Feature\Http\Controllers\Auth\Registration;
 
 use App\Email;
-use App\MemberRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use Illuminate\Validation\ValidationException;
 
@@ -79,11 +77,11 @@ class MemberRequestControllerTest extends TestCase
     }
 
     /** @test */
-    public function a_member_request_can_be_denied()
+    public function a_member_request_can_be_refused()
     {
         $response = $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
 
-        $response = $this->post(route('denyMemberRequest'), ['id' => $response["data"]["member_request"]["id"]]);
+        $response = $this->post(route('refuseMemberRequest'), ['id' => $response["data"]["member_request"]["id"]]);
 
         $response->assertStatus(200);
         $response->assertJsonStructure(['data' => ['member_request']]);
