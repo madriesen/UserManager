@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\MemberRequestApprovelRequest;
 use App\Http\Requests\memberRequestRequest;
 use App\MemberRequest;
-use Symfony\Component\HttpFoundation\Request;
 
 class MemberRequestController extends Controller
 {
