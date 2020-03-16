@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,8 +17,9 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['namespace'=>'auth\registration', 'middleware' => 'api'], function(){
-    Route::post('/memberRequest', 'MemberRequestController')->name('memberRequest');
-    Route::post('/approveMemberRequest', 'MemberRequestController@approve')->name('approveMemberRequest');
-    Route::post('/refuseMemberRequest', 'MemberRequestController@refuse')->name('refuseMemberRequest');
+Route::group(['namespace' => 'auth\registration\memberrequest', 'middleware' => 'api', 'prefix' => 'memberrequest'], function () {
+    Route::post('/create', 'MemberRequestController')->name('memberRequest');
+    Route::post('/approve', 'MemberRequestController@approve')->name('approveMemberRequest');
+    Route::post('/refuse', 'MemberRequestController@refuse')->name('refuseMemberRequest');
+    Route::get('/all', 'MemberRequestController@getAll')->name('getAllMemberRequests');
 });
