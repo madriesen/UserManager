@@ -47,8 +47,8 @@ class MemberRequestControllerTest extends TestCase
     /** @test */
     public function after_a_meber_request_a_member_request_is_added_to_the_database()
     {
-        $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
-        $this->assertDatabaseHas('member_requests', ['id' => 1]);
+        $response = $this->post(route('memberRequest'), ['email' => 'test@mail.be']);
+        $this->assertDatabaseHas('member_requests', ['id' => $response["data"]["member_request"]["id"]]);
     }
 
     /** @test */

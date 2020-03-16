@@ -15,6 +15,6 @@ class NotifyAdminViaMail
     public function handle(Created $event)
     {
         // send email
-        print_r('sending email...');
+        print_r('sending member_request notification email to admin...');
     }
 }
