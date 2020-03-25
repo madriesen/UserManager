@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['namespace' => 'auth\registration\memberrequest', 'middleware' => 'api', 'prefix' => 'memberrequest'], function () {
+Route::group(['namespace' => 'auth\registration\memberrequest', 'middleware' => 'api', 'prefix' => 'registration/memberrequest'], function () {
     Route::post('/create', 'MemberRequestController')->name('memberRequest');
     Route::post('/approve', 'MemberRequestController@approve')->name('approveMemberRequest');
     Route::post('/refuse', 'MemberRequestController@refuse')->name('refuseMemberRequest');

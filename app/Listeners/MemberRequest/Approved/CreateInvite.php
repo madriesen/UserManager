@@ -14,6 +14,7 @@ class CreateInvite
      */
     public function handle(Approved $event)
     {
+        dump($event);
         // dump('Create invite...');
     }
 }
