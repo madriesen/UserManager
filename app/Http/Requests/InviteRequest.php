@@ -28,4 +28,17 @@ class InviteRequest extends FormRequest
             'email_id' => 'required',
         ];
     }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'member_request_id.required' => 'member request is required',
+            'email_id' => 'email is required',
+        ];
+    }
 }

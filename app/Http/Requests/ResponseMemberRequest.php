@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Api\FormRequest;
 
-class memberRequestRequest extends FormRequest
+class ResponseMemberRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,8 @@ class memberRequestRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => 'required|email'
+            'member_request_id' => 'required',
+            'response',
         ];
     }
 
@@ -36,8 +37,21 @@ class memberRequestRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => 'An emailaddress is required',
-            'email.email'  => 'This is not a valid emailaddress',
+            'member_request_id.required' => 'Please, enter a valid member request id',
         ];
     }
+
+    /**
+     *  Filters to be applied to the input.
+     *
+     * @return array
+     */
+    public function filters()
+    {
+        return [
+            'member_request_id' => 'trim',
+        ];
+    }
+
+
 }

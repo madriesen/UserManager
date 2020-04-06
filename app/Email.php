@@ -11,4 +11,8 @@ class Email extends Model
     public function member_request(){
         return $this->belongsTo('App\MemberRequest');
     }
+
+    public function invite(){
+        return $this->belongsTo('App\Invite');
+    }
 }

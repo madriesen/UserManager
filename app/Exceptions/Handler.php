@@ -29,7 +29,7 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param  \Throwable  $exception
+     * @param \Throwable $exception
      * @return void
      *
      * @throws \Exception
@@ -42,14 +42,25 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \Throwable  $exception
+     * @param \Illuminate\Http\Request $request
+     * @param \Throwable $exception
      * @return \Symfony\Component\HttpFoundation\Response
      *
      * @throws \Throwable
      */
     public function render($request, Throwable $exception)
     {
+//        if ($this->isHttpException($exception)) {
+//
+//            switch ($exception->getStatusCode()) {
+//                case 405:
+//                    return response()->json(['error' => ['message' => 'Method not allowed']]);
+//                    break;
+//            }
+
+//    }
+
+
         return parent::render($request, $exception);
     }
 }

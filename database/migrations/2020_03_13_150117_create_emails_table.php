@@ -17,9 +17,13 @@ class CreateEmailsTable extends Migration
             $table->id();
             $table->string('address');
             $table->foreignId('member_request_id');
+            $table->foreignId('invite_id')->nullable();
+            $table->foreignId('account_id')->nullable();
             $table->timestamps();
 
             $table->foreign('member_request_id')->references('id')->on('member_requests')->onDelete('cascade');
+            $table->foreign('invite_id')->references('id')->on('invites')->onDelete('cascade');
+            $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
     }
 

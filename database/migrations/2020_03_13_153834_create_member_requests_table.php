@@ -15,8 +15,10 @@ class CreateMemberRequestsTable extends Migration
     {
         Schema::create('member_requests', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('approvedAt')->nullable();
-            $table->timestamp('refusedAt')->nullable();
+            $table->string('name')->nullable();
+            $table->string('first_name')->nullable();
+            $table->timestamp('approved_at')->nullable();
+            $table->timestamp('refused_at')->nullable();
             $table->timestamps();
         });
     }

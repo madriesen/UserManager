@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Events\MemberRequest;
+namespace App\Events\Invite;
 
-use App\Email;
-use App\MemberRequest;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
@@ -12,19 +10,19 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Approved
+class Declined
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $member_request;
+    public $invite;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(MemberRequest $member_request)
+    public function __construct($invite)
     {
-        $this->member_request = $member_request;
+        $this->invite = $invite;
     }
 }

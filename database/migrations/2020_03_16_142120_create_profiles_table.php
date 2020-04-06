@@ -15,16 +15,14 @@ class CreateProfilesTable extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('firstname');
+            $table->string('name')->nullable();
+            $table->string('first_name')->nullable();
             $table->string('tel')->nullable();
             $table->date('birthday')->nullable();
             $table->string('profile_picture_url')->default('/assets/profilepictures/default.png');
-            $table->foreignId('email_id');
             $table->foreignId('account_id')->nullable();
             $table->timestamps();
 
-            $table->foreign('email_id')->references('id')->on('emails')->onDelete('cascade');
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');
         });
     }

@@ -13,7 +13,7 @@ class ProfileSeeder extends Seeder
     {
         Profile::create([
             'name' => 'Admin',
-            'firstname' => 'Administrator',
+            'first_name' => 'Administrator',
         ]);
     }
 }

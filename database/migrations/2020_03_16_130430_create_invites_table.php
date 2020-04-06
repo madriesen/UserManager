@@ -15,7 +15,8 @@ class CreateInvitesTable extends Migration
     {
         Schema::create('invites', function (Blueprint $table) {
             $table->id();
-            $table->timestamp('openedAt')->nullable();
+            $table->timestamp('accepted_at')->nullable();
+            $table->timestamp('declined_at')->nullable();
             $table->timestamps();
         });
     }
