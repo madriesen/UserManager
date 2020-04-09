@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth\Registration\Invite;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Invite\InviteRequest;
+use App\Http\Requests\ResponseInviteRequest;
 use App\Invite;
 use App\MemberRequest;
 use App\Repositories\Interfaces\InviteRepositoryInterface;
@@ -23,7 +24,7 @@ class InviteController extends Controller
     public function __invoke(InviteRequest $request)
     {
         $member_request = MemberRequest::find($request->member_request_id);
-        if ($this->_MemberRequestIsValid($member_request))
+        if ($this->_MemberRequestIsInvalid($member_request))
             return Response::error('Please, enter an existing member request.');
 
         $this->invite_repository->createByMemberRequestId($member_request->id);
@@ -31,21 +32,23 @@ class InviteController extends Controller
         return Response::success();
     }
 
-//    public function response(ResponseInviteRequest $request)
-//    {
-//        $invite = Invite::find($request->invite_id);
-//
-//        if ($this->_chkInviteExistsAcceptedOrDeclined($invite)) return $this->_errorMessage('Invite does not exist.');
-//
-//        // dd($request);
-//        $response = $request->route()->getAction()['response'];
-//
-//        if ($response === "accept") $this->_accept($invite);
-//        elseif ($response === "decline") $this->_decline($invite);
-//
-//
-//        return $this->_successMessage($invite);
-//    }
+    public function response(ResponseInviteRequest $request)
+    {
+        $invite = Invite::find($request->invite_id);
+        if ($this->_InviteIsInvalid($invite))
+            return Response::error('The invite is already responded');
+
+        $this->_AcceptOrDeclineByResponse($request);
+
+        return Response::success();
+    }
+
+    public function getAll()
+    {
+        $invites = $this->invite_repository->all();
+        return Response::success($invites);
+    }
+
 //
 //    public function getAll()
 //    {
@@ -65,8 +68,29 @@ class InviteController extends Controller
      * @param $member_request
      * @return bool
      */
-    private function _MemberRequestIsValid($member_request): bool
+    private function _MemberRequestIsInvalid($member_request): bool
     {
         return (empty($member_request) || !$member_request->responded || $member_request->refused);
+    }
+
+    /**
+     * @param ResponseInviteRequest $request
+     */
+    public function _AcceptOrDeclineByResponse(ResponseInviteRequest $request): void
+    {
+        $response = $request->route()->getAction()['response'];
+        if ($response === 'accept')
+            $this->invite_repository->acceptById($request->invite_id);
+        elseif ($response === 'decline')
+            $this->invite_repository->declineById($request->invite_id);
+    }
+
+    /**
+     * @param $invite
+     * @return bool
+     */
+    public function _InviteIsInvalid($invite): bool
+    {
+        return empty($invite) || ($invite->declined) || ($invite->accepted);
     }
 }

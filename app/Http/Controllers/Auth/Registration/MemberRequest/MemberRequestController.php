@@ -30,7 +30,7 @@ class MemberRequestController extends Controller
      */
     public function __invoke(CreateMemberRequestRequest $request)
     {
-        if ($this->_chkEmailIsValid($request))
+        if ($this->_chkEmailIsInvalid($request))
             return Response::error('The request is already made.');
 
         $this->member_request_repository->create($request);
@@ -45,10 +45,10 @@ class MemberRequestController extends Controller
     public function response(ResponseMemberRequest $request)
     {
         $member_request = $this->member_request_repository->findById($request->member_request_id);
-        if ($this->_chkMemberRequestIsValid($member_request))
+        if ($this->_chkMemberRequestIsInvalid($member_request))
             return Response::error('The request is already responded');
 
-        $this->_approveOrRefuseAccordingToRequest($request, $member_request);
+        $this->_approveOrRefuseAccordingToResponse($request, $member_request);
 
         return Response::success();
     }
@@ -70,7 +70,7 @@ class MemberRequestController extends Controller
      * @param CreateMemberRequestRequest $request
      * @return bool
      */
-    private function _chkEmailIsValid(CreateMemberRequestRequest $request): bool
+    private function _chkEmailIsInvalid(CreateMemberRequestRequest $request): bool
     {
         $email = Email::all()->firstWhere('address', $request->email_address);
         return (!empty($email) && ($email->member_request->approved || !$email->member_request->refused));
@@ -80,16 +80,16 @@ class MemberRequestController extends Controller
      * @param MemberRequest $member_request
      * @return bool
      */
-    private function _chkMemberRequestIsValid(MemberRequest $member_request): bool
+    private function _chkMemberRequestIsInvalid(MemberRequest $member_request): bool
     {
-        return (!$member_request->refused && $member_request->approved);
+        return (!$member_request->refused && $member_request->approved) || ($member_request->refused && !$member_request->approved);
     }
 
     /**
      * @param ResponseMemberRequest $request
      * @param MemberRequest $member_request
      */
-    private function _approveOrRefuseAccordingToRequest(ResponseMemberRequest $request, MemberRequest $member_request): void
+    private function _approveOrRefuseAccordingToResponse(ResponseMemberRequest $request, MemberRequest $member_request): void
     {
         $response = $request->route()->getAction()['response'];
 

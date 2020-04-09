@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Api\FormRequest;
 
 class ResponseInviteRequest extends FormRequest
 {
@@ -26,6 +26,18 @@ class ResponseInviteRequest extends FormRequest
         return [
             'invite_id' => 'required',
             'accept', 'decline'
+        ];
+    }
+
+    /**
+     * Get the error messages for the defined validation rules.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'invite_id.required' => 'Please, enter a valid invite',
         ];
     }
 }

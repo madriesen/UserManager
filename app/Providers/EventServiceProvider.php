@@ -14,7 +14,6 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         // member_request
         'App\Events\MemberRequest\Created' => [
-            'App\Listeners\MemberRequest\Created\NotifyAdminViaMail',
             'App\Listeners\MemberRequest\Created\CreateEmail',
         ],
         'App\Events\MemberRequest\Approved' => [
@@ -22,7 +21,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         // invites
         'App\Events\Invite\Accepted' => [
-            'App\Listeners\Invite\Accepted\NotifyAdminViaMail',
+            'App\Listeners\Invite\Accepted\CreateAccount',
         ],
         'App\Events\Invite\Declined' => []
     ];

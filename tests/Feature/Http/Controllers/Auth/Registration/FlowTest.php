@@ -9,15 +9,9 @@ use Illuminate\Support\Facades\Date;
 
 class FlowTest extends TestCase
 {
-    /*
-     * when_a_member_request_is_created_then_an_email_address_model_is_created_in_the_database
-     *
-     * when_a_member_request_is_approved_then_an_invite_is_created
-     *
-     */
     use RefreshDatabase;
 
-    private $email_address;
+    private string $email_address;
 
     public function setUp(): void
     {
@@ -42,6 +36,16 @@ class FlowTest extends TestCase
         $member_request = Email::all()->firstWhere('address', $this->email_address)->member_request;
         $this->postJson(route('approveMemberRequest'), ['member_request_id' => $member_request->id]);
         $this->assertDatabaseHas('invites', ['created_at' => Date::now()]);
+    }
 
+    /** @test */
+    public function when_an_invite_is_accepted_an_account_is_created_in_the_database()
+    {
+        $this->postJson(route('memberRequest'), ['email_address' => $this->email_address]);
+        $member_request = Email::all()->firstWhere('address', $this->email_address)->member_request;
+        $this->postJson(route('approveMemberRequest'), ['member_request_id' => $member_request->id]);
+        $invite = Email::all()->firstWhere('address', $this->email_address)->invite;
+        $this->postJson(route('acceptInvite'), ['invite_id' => $invite->id]);
+        $this->assertDatabaseHas('accounts', ['created_at' => Date::now()]);
     }
 }

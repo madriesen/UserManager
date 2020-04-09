@@ -11,4 +11,28 @@ class Invite extends Model
         return $this->hasOne('App\Email');
     }
 
+    /**
+     * @return bool
+     */
+    public function getRespondedAttribute(): bool
+    {
+        return ($this->approved || $this->refused);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getAcceptedAttribute(): bool
+    {
+        return !empty($this->accepted_at);
+    }
+
+    /**
+     * @return bool
+     */
+    public function getDeclinedAttribute(): bool
+    {
+        return !empty($this->declined_at);
+    }
+
 }

@@ -6,17 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class Account extends Model
 {
-    protected $guarded = [];
+    protected array $guarded = [];
+    protected array $hidden = ['password'];
 
-    public function account_type(){
+    public function account_type()
+    {
         return $this->belongsTo('App\AccountType');
     }
 
-    public function email(){
+    public function email()
+    {
         return $this->hasOne('App\Email');
     }
 
-    public function profile(){
+    public function profile()
+    {
         return $this->hasOne('App\Profile');
     }
 }

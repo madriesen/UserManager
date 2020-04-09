@@ -15,10 +15,10 @@ class CreateAccountsTable extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('primary_email_id');
-            $table->string('password');
+            $table->foreignId('primary_email_id')->nullable();
+            $table->string('password')->nullable();
             $table->boolean('inactiveSince')->nullable()->default(null);
-            $table->foreignId('account_type_id');
+            $table->foreignId('account_type_id')->nullable()->default(null);
             $table->timestamps();
 
             $table->foreign('account_type_id')->references('id')->on('account_types')->onDelete('cascade');

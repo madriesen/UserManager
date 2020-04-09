@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Mixins\ResponseMixins;
+use App\Repositories\AccountRepository;
 use App\Repositories\InviteRepository;
 use App\Repositories\MemberRequestRepository;
 use Illuminate\Support\Facades\Response;
@@ -36,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton('Invite', function ($app) {
             return new InviteRepository(new MemberRequestRepository());
+        });
+        $this->app->singleton('Account', function ($app) {
+            return new AccountRepository();
         });
     }
 }

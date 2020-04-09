@@ -24,7 +24,7 @@ class ResponseMemberRequest extends FormRequest
     public function rules()
     {
         return [
-            'member_request_id' => 'required',
+            'member_request_id' => 'required|exists:member_requests,id',
             'response',
         ];
     }
@@ -38,6 +38,7 @@ class ResponseMemberRequest extends FormRequest
     {
         return [
             'member_request_id.required' => 'Please, enter a valid member request id',
+            'member_request_id.exists' => 'Please, enter a valid member request id',
         ];
     }
 

@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Date;
 class MemberRequestRepository implements MemberRequestRepositoryInterface
 {
     /**
-     * @param CreateMemberRequestRequest $request
-     * @return void
+     * @inheritDoc
      */
     public function create(CreateMemberRequestRequest $request)
     {
@@ -28,8 +27,7 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     }
 
     /**
-     * @param $member_request_id
-     * @return mixed
+     * @inheritDoc
      */
     public function findById(Int $member_request_id)
     {
@@ -37,8 +35,7 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     }
 
     /**
-     * @param Int $member_request_id
-     * @param ResponseMemberRequest $request
+     * @inheritDoc
      */
     public function approveById(Int $member_request_id, ResponseMemberRequest $request)
     {
@@ -50,7 +47,7 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     }
 
     /**
-     * @param $member_request_id
+     * @inheritDoc
      */
     public function refuseById(Int $member_request_id)
     {
@@ -59,6 +56,9 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
         $member_request->save();
     }
 
+    /**
+     * @inheritDoc
+     */
     public function all()
     {
         return MemberRequest::all()->map->format();
