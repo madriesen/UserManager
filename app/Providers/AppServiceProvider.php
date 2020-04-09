@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Mixins\ResponseMixins;
 use App\Repositories\InviteRepository;
 use App\Repositories\MemberRequestRepository;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 use function foo\func;
 
@@ -16,9 +18,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-//        $this->app->bind('MemberRequest', function () {
-//            return new MemberRequestRepository();
-//        });
     }
 
     /**
@@ -28,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // Macros
+        Response::mixin(new ResponseMixins());
+
+        // Facades
         $this->app->singleton('MemberRequest', function ($app) {
             return new MemberRequestRepository();
         });

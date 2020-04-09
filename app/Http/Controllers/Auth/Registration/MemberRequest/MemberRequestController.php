@@ -9,6 +9,7 @@ use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
 use App\Repositories\Interfaces\MemberRequestRepositoryInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Response;
 
 class MemberRequestController extends Controller
 {
@@ -30,11 +31,11 @@ class MemberRequestController extends Controller
     public function __invoke(CreateMemberRequestRequest $request)
     {
         if ($this->_chkEmailIsValid($request))
-            return $this->_errorMessage('The request is already made.');
+            return Response::error('The request is already made.');
 
         $this->member_request_repository->create($request);
 
-        return $this->_successMessage();
+        return Response::success();
     }
 
     /**
@@ -45,11 +46,11 @@ class MemberRequestController extends Controller
     {
         $member_request = $this->member_request_repository->findById($request->member_request_id);
         if ($this->_chkMemberRequestIsValid($member_request))
-            return $this->_errorMessage('The request is already responded');
+            return Response::error('The request is already responded');
 
         $this->_approveOrRefuseAccordingToRequest($request, $member_request);
 
-        return $this->_successMessage();
+        return Response::success();
     }
 
     /**
@@ -57,7 +58,7 @@ class MemberRequestController extends Controller
      */
     public function getAll()
     {
-        return $this->_successMessage($this->member_request_repository->all());
+        return Response::success($this->member_request_repository->all());
     }
 
 
@@ -94,23 +95,5 @@ class MemberRequestController extends Controller
 
         if ($response === 'approve') $this->member_request_repository->approveById($member_request->id, $request);
         elseif ($response === 'refuse') $this->member_request_repository->refuseById($member_request->id);
-    }
-
-    /**
-     * @param string $error_message
-     * @return JsonResponse
-     */
-    private function _errorMessage(string $error_message): JsonResponse
-    {
-        return response()->json(['error' => ['message' => $error_message]]);
-    }
-
-    /**
-     * @param object $return_data
-     * @return JsonResponse
-     */
-    private function _successMessage($return_data = null): JsonResponse
-    {
-        return response()->json(['success' => true, 'data' => $return_data]);
     }
 }

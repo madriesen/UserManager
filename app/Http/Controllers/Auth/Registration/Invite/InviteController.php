@@ -8,6 +8,7 @@ use App\Invite;
 use App\MemberRequest;
 use App\Repositories\Interfaces\InviteRepositoryInterface;
 use App\Repositories\MemberRequestRepository;
+use Illuminate\Support\Facades\Response;
 
 class InviteController extends Controller
 {
@@ -23,11 +24,11 @@ class InviteController extends Controller
     {
         $member_request = MemberRequest::find($request->member_request_id);
         if ($this->_MemberRequestIsValid($member_request))
-            return response()->json(['error' => ['message' => 'Please, enter an existing member request.', 'object' => $member_request]]);
+            return Response::error('Please, enter an existing member request.');
 
         $this->invite_repository->createByMemberRequestId($member_request->id);
 
-        return response()->json(['success' => true]);
+        return Response::success();
     }
 
 //    public function response(ResponseInviteRequest $request)
