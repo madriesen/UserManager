@@ -3,6 +3,7 @@
 namespace App\Events\MemberRequest;
 
 use App\Email;
+use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
 use App\MemberRequest;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -17,14 +18,17 @@ class Approved
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $member_request;
+    public $request;
 
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param MemberRequest $member_request
+     * @param ResponseMemberRequest $request
      */
-    public function __construct(MemberRequest $member_request)
+    public function __construct(MemberRequest $member_request, ResponseMemberRequest $request)
     {
         $this->member_request = $member_request;
+        $this->request = $request;
     }
 }

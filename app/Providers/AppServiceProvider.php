@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\Facades\Validator;
+use App\Repositories\InviteRepository;
+use App\Repositories\MemberRequestRepository;
 use Illuminate\Support\ServiceProvider;
+use function foo\func;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,7 +16,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+//        $this->app->bind('MemberRequest', function () {
+//            return new MemberRequestRepository();
+//        });
     }
 
     /**
@@ -24,6 +28,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $this->app->singleton('MemberRequest', function ($app) {
+            return new MemberRequestRepository();
+        });
+        $this->app->singleton('Invite', function ($app) {
+            return new InviteRepository(new MemberRequestRepository());
+        });
     }
 }

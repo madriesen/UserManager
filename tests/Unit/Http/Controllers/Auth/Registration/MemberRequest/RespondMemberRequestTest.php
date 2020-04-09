@@ -42,9 +42,11 @@ class RespondMemberRequestTest extends TestCase
     /** @test */
     public function a_member_request_approval_without_arguments_fails()
     {
+        $this->assertDatabaseHas('member_requests', ['approved_at' => NULL]);
         $response = $this->postJSON(route('approveMemberRequest'));
         $response->assertJsonStructure(['error' => ['message']]);
         $response->assertJson(['error' => ['message' => ['member_request_id' => 'Please, enter a valid member request id']]]);
+        $this->assertDatabaseHas('member_requests', ['approved_at' => NULL]);
     }
 
     /** @test */
@@ -71,9 +73,11 @@ class RespondMemberRequestTest extends TestCase
     /** @test */
     public function a_member_request_refusal_without_arguments_fails()
     {
+        $this->assertDatabaseHas('member_requests', ['refused_at' => NULL]);
         $response = $this->postJSON(route('refuseMemberRequest'));
         $response->assertJsonStructure(['error' => ['message']]);
         $response->assertJson(['error' => ['message' => ['member_request_id' => 'Please, enter a valid member request id']]]);
+        $this->assertDatabaseHas('member_requests', ['refused_at' => NULL]);
 
     }
 

@@ -4,7 +4,9 @@ namespace App\Listeners\MemberRequest\Approved;
 
 use App\Events\MemberRequest\Approved;
 use App\Http\Controllers\Auth\Registration\Invite\InviteController;
-use App\Http\Requests\InviteRequest;
+use App\Repositories\InviteRepository;
+use App\Repositories\MemberRequestRepository;
+use Illuminate\Support\Facades\Redirect;
 
 class CreateInvite
 {
@@ -16,8 +18,7 @@ class CreateInvite
      */
     public function handle(Approved $event)
     {
-        $request_data = ['member_request_id' => $event->member_request->id, 'email_id' => $event->member_request->email->id];
-        $request = new InviteRequest($request_data);
-        (new InviteController)->__invoke($request);
+        // InviteRepository -> called trough facade
+        \Invite::createByMemberRequestId($event->member_request->id);
     }
 }

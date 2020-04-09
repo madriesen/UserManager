@@ -8,11 +8,13 @@ class Email extends Model
 {
     protected $guarded = [];
 
-    public function member_request(){
+    public function member_request()
+    {
         return $this->belongsTo('App\MemberRequest');
     }
 
-    public function invite(){
+    public function invite()
+    {
         return $this->belongsTo('App\Invite');
     }
 }

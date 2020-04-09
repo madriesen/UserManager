@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'debug' => (bool) env('APP_DEBUG', false),
+    'debug' => (bool)env('APP_DEBUG', false),
 
     /*
     |--------------------------------------------------------------------------
@@ -173,6 +173,7 @@ return [
         App\Providers\AuthServiceProvider::class,
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
+        App\Providers\RepositoriesServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
     ],
@@ -226,6 +227,11 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
+
+        // custom
+
+        'MemberRequest' => \App\Repositories\Facades\MemberRequestRepositoryFacade::class,
+        'Invite' => \App\Repositories\Facades\InviteRepositoryFacade::class,
 
     ],
 

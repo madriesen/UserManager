@@ -2,32 +2,49 @@
 
 namespace App\Http\Controllers\Auth\Registration\MemberRequest;
 
-use App\Email;
-use App\Events\MemberRequest as MemberRequestEvent;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
-use App\Http\Requests\ResponseMemberRequest;
+use App\Email;
 use App\MemberRequest;
+use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
+use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
+use App\Repositories\Interfaces\MemberRequestRepositoryInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Date;
 
 class MemberRequestController extends Controller
 {
+    private MemberRequestRepositoryInterface $member_request_repository;
 
+    /**
+     * MemberRequestController constructor.
+     * @param MemberRequestRepositoryInterface $member_request_repository
+     */
+    public function __construct(MemberRequestRepositoryInterface $member_request_repository)
+    {
+        $this->member_request_repository = $member_request_repository;
+    }
+
+    /**
+     * @param CreateMemberRequestRequest $request
+     * @return JsonResponse
+     */
     public function __invoke(CreateMemberRequestRequest $request)
     {
-        if ($this->_chkEmailExists($request))
+        if ($this->_chkEmailIsValid($request))
             return $this->_errorMessage('The request is already made.');
 
-        $this->_createMemberRequest($request);
+        $this->member_request_repository->create($request);
 
         return $this->_successMessage();
     }
 
+    /**
+     * @param ResponseMemberRequest $request
+     * @return JsonResponse
+     */
     public function response(ResponseMemberRequest $request)
     {
-        $member_request = $this->_getMemberRequest($request);
-        if ($this->_chkMemberRequest($member_request))
+        $member_request = $this->member_request_repository->findById($request->member_request_id);
+        if ($this->_chkMemberRequestIsValid($member_request))
             return $this->_errorMessage('The request is already responded');
 
         $this->_approveOrRefuseAccordingToRequest($request, $member_request);
@@ -35,88 +52,49 @@ class MemberRequestController extends Controller
         return $this->_successMessage();
     }
 
-
+    /**
+     * @return JsonResponse
+     */
     public function getAll()
     {
-        return $this->_successMessage(MemberRequest::all()->toArray());
+        return $this->_successMessage($this->member_request_repository->all());
     }
 
 
-    // private functions
+    // ------------------------- //
+    // --  private functions  -- //
+    // ------------------------- //
 
     /**
      * @param CreateMemberRequestRequest $request
      * @return bool
      */
-    private function _chkEmailExists(CreateMemberRequestRequest $request): bool
+    private function _chkEmailIsValid(CreateMemberRequestRequest $request): bool
     {
         $email = Email::all()->firstWhere('address', $request->email_address);
-        return (
-            !empty($email) &&
-            !empty($email->member_request)
-            && (
-            ($this->_chkMemberRequestIsApproved($email) ||
-                (
-                    ((!($this->_chkMemberRequestIsApproved($email)))) &&
-                    ($this->_chkMemberRequestIsRefused($email))
-                )
-            )
-            )
-        );
+        return (!empty($email) && ($email->member_request->approved || !$email->member_request->refused));
     }
 
     /**
-     * @param CreateMemberRequestRequest $request
-     * @return mixed
-     */
-    private function _createMemberRequest(CreateMemberRequestRequest $request)
-    {
-        $member_request = MemberRequest::create(['name' => $request->name, 'first_name' => $request->first_name]);
-        event(new MemberRequestEvent\Created($member_request, $request));
-        return $member_request;
-
-    }
-
-    /**
-     * @param $member_request
+     * @param MemberRequest $member_request
      * @return bool
      */
-    private function _chkMemberRequest($member_request): bool
+    private function _chkMemberRequestIsValid(MemberRequest $member_request): bool
     {
-        return (empty($member_request->refused_at) && !empty($member_request->approved_at));
+        return (!$member_request->refused && $member_request->approved);
     }
-
 
     /**
      * @param ResponseMemberRequest $request
-     * @param $member_request
+     * @param MemberRequest $member_request
      */
-    private function _approveOrRefuseAccordingToRequest(ResponseMemberRequest $request, $member_request): void
+    private function _approveOrRefuseAccordingToRequest(ResponseMemberRequest $request, MemberRequest $member_request): void
     {
         $response = $request->route()->getAction()['response'];
 
-        if ($response === 'approve') $this->_approve($member_request);
-        elseif ($response === 'refuse') $this->_refuse($member_request);
+        if ($response === 'approve') $this->member_request_repository->approveById($member_request->id, $request);
+        elseif ($response === 'refuse') $this->member_request_repository->refuseById($member_request->id);
     }
-
-    /**
-     * @param $member_request
-     */
-    private function _approve($member_request): void
-    {
-        $member_request->approved_at = Date::now()->toImmutable();
-        $member_request->save();
-    }
-
-    /**
-     * @param $member_request
-     */
-    private function _refuse($member_request): void
-    {
-        $member_request->refused_at = Date::now()->toImmutable();
-        $member_request->save();
-    }
-
 
     /**
      * @param string $error_message
@@ -128,40 +106,11 @@ class MemberRequestController extends Controller
     }
 
     /**
-     * @param array $return_data
+     * @param object $return_data
      * @return JsonResponse
      */
-    private function _successMessage(array $return_data = null): JsonResponse
+    private function _successMessage($return_data = null): JsonResponse
     {
         return response()->json(['success' => true, 'data' => $return_data]);
     }
-
-    /**
-     * @param $email
-     * @return bool
-     */
-    private function _chkMemberRequestIsApproved($email): bool
-    {
-        return !empty($email->member_request->approved_at);
-    }
-
-    /**
-     * @param $email
-     * @return bool
-     */
-    private function _chkMemberRequestIsRefused($email): bool
-    {
-        return empty($email->member_request->refused_at);
-    }
-
-    /**
-     * @param ResponseMemberRequest $request
-     * @return mixed
-     */
-    private function _getMemberRequest(ResponseMemberRequest $request)
-    {
-        return MemberRequest::find($request->member_request_id);
-    }
-
-
 }

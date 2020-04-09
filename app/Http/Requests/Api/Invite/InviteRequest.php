@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\Invite;
 
-use Illuminate\Foundation\Http\FormRequest;
+use App\Http\Requests\Api\FormRequest;
 
 class InviteRequest extends FormRequest
 {
@@ -25,7 +25,6 @@ class InviteRequest extends FormRequest
     {
         return [
             'member_request_id' => 'required',
-            'email_id' => 'required',
         ];
     }
 
@@ -37,8 +36,7 @@ class InviteRequest extends FormRequest
     public function messages()
     {
         return [
-            'member_request_id.required' => 'member request is required',
-            'email_id' => 'email is required',
+            'member_request_id.required' => 'Please, enter a valid member request',
         ];
     }
 }
