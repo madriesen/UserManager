@@ -32,7 +32,6 @@ class RespondInviteTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $email_address;
     private $invite_id;
 
     public function setUp(): void
