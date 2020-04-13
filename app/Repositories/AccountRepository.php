@@ -17,7 +17,7 @@ class AccountRepository implements AccountRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function createByInviteId(Int $invite_id)
+    public function createByInviteId(Int $invite_id): void
     {
         $email = Invite::find($invite_id)->first()->email;
         $account = $email->account()->create();
@@ -30,7 +30,7 @@ class AccountRepository implements AccountRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findById(Int $account_id)
+    public function findById(Int $account_id): Account
     {
         return Account::find($account_id);
     }
@@ -41,5 +41,21 @@ class AccountRepository implements AccountRepositoryInterface
     public function all()
     {
         return Account::all()->map->format();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByPrimaryEmailAddress(string $email_address): Account
+    {
+        return Account::all()->firstWhere('primary_email_id', \Email::findByAddress($email_address)->id);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByPrimaryEmailAddressId(Int $email_id): Account
+    {
+        return Account::all()->firstWhere('primary_email_id', \Email::findById($email_id)->id);
     }
 }
