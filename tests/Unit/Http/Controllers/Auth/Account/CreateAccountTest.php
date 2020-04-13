@@ -2,8 +2,6 @@
 
 namespace Tests\Unit\Http\Controllers\Auth\Account;
 
-use App\Account;
-use App\Email;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
@@ -20,8 +18,9 @@ class CreateAccountTest extends TestCase
         parent::setUp();
         Date::setTestNow(Date::create(2020, 4, 7, 10, 43)->toImmutable());
         \MemberRequest::create(new CreateMemberRequestRequest(['email_address' => 'test@testing.com']));
-        \Invite::createByMemberRequestId(Email::all()->firstWhere('address', 'test@testing.com')->member_request->id);
-        $this->invite_id = Email::all()->firstWhere('address', 'test@testing.com')->invite->id;
+        \Invite::createByMemberRequestId(\Email::findByAddress('test@testing.com')->first()->member_request->id);
+        $this->invite_id = \Email::findByAddress('test@testing.com')->first()->invite->id;
+        $this->seed(\DatabaseSeeder::class);
     }
 
     /** @test */

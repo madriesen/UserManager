@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Account;
+use App\AccountType;
 use App\Invite;
 use App\Repositories\interfaces\AccountRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -23,6 +24,7 @@ class AccountRepository implements AccountRepositoryInterface
         $account->primary_email_id = $email->id;
         $account->password = Hash::make(Str::random(32));
         $account->save();
+        AccountType::all()->firstwhere('title', 'default')->accounts()->save($account);
     }
 
     /**
