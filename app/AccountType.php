@@ -8,7 +8,8 @@ class AccountType extends Model
 {
     protected $guarded = [];
 
-    public function accounts(){
+    public function accounts()
+    {
         return $this->hasMany('App\Account');
     }
 }

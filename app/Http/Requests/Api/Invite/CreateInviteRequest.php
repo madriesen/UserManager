@@ -4,7 +4,7 @@ namespace App\Http\Requests\Api\Invite;
 
 use App\Http\Requests\Api\FormRequest;
 
-class InviteRequest extends FormRequest
+class CreateInviteRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,7 @@ class InviteRequest extends FormRequest
     public function rules()
     {
         return [
-            'member_request_id' => 'required',
+            'member_request_id' => 'required|numeric|exists:member_requests,id',
         ];
     }
 
@@ -37,6 +37,8 @@ class InviteRequest extends FormRequest
     {
         return [
             'member_request_id.required' => 'Please, enter a valid member request',
+            'member_request_id.numeric' => 'Please, enter a valid member request',
+            'member_request_id.exists' => 'Please, enter an existing member request',
         ];
     }
 }

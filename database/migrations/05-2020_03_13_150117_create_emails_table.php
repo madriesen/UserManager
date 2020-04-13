@@ -15,7 +15,7 @@ class CreateEmailsTable extends Migration
     {
         Schema::create('emails', function (Blueprint $table) {
             $table->id();
-            $table->string('address');
+            $table->string('address')->nullable();
             $table->foreignId('member_request_id');
             $table->foreignId('invite_id')->nullable();
             $table->foreignId('account_id')->nullable();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Api\Invite;
 
 use App\Http\Requests\Api\FormRequest;
 
@@ -24,7 +24,7 @@ class ResponseInviteRequest extends FormRequest
     public function rules()
     {
         return [
-            'invite_id' => 'required',
+            'invite_id' => 'required|exists:invites,id',
             'accept', 'decline'
         ];
     }
@@ -38,6 +38,7 @@ class ResponseInviteRequest extends FormRequest
     {
         return [
             'invite_id.required' => 'Please, enter a valid invite',
+            'invite_id.exists' => 'Please, enter an existing invite',
         ];
     }
 }

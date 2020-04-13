@@ -31,6 +31,12 @@ Route::group(['namespace' => 'auth\registration\invite', 'middleware' => 'Api', 
     Route::get('/all', 'InviteController@getAll')->name('getAllInvites');
 });
 
-Route::group(['namespace' => 'auth\registration\profile', 'middleware' => 'Api', 'prefix' => 'registration/profile'], function () {
+Route::group(['namespace' => 'auth\account', 'middleware' => 'Api', 'prefix' => 'account'], function () {
+    Route::post('/create', 'AccountController')->name('account');
+    Route::get('/all', 'AccountController@getAll')->name('getAllAccounts');
+});
+
+Route::group(['namespace' => 'auth\profile', 'middleware' => 'Api', 'prefix' => 'profile'], function () {
     Route::post('/create', 'ProfileController')->name('profile');
+    Route::post('/update', 'ProfileController@update')->name('updateProfile');
 });

@@ -3,10 +3,7 @@
 namespace App\Listeners\MemberRequest\Approved;
 
 use App\Events\MemberRequest\Approved;
-use App\Http\Controllers\Auth\Registration\Invite\InviteController;
-use App\Repositories\InviteRepository;
-use App\Repositories\MemberRequestRepository;
-use Illuminate\Support\Facades\Redirect;
+
 
 class CreateInvite
 {

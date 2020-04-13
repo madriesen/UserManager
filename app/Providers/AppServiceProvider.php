@@ -4,8 +4,10 @@ namespace App\Providers;
 
 use App\Mixins\ResponseMixins;
 use App\Repositories\AccountRepository;
+use App\Repositories\EmailRepository;
 use App\Repositories\InviteRepository;
 use App\Repositories\MemberRequestRepository;
+use App\Repositories\ProfileRepository;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
 use function foo\func;
@@ -36,10 +38,16 @@ class AppServiceProvider extends ServiceProvider
             return new MemberRequestRepository();
         });
         $this->app->singleton('Invite', function ($app) {
-            return new InviteRepository(new MemberRequestRepository());
+            return new InviteRepository();
         });
         $this->app->singleton('Account', function ($app) {
             return new AccountRepository();
+        });
+        $this->app->singleton('Email', function ($app) {
+            return new EmailRepository();
+        });
+        $this->app->singleton('Profile', function ($app) {
+            return new ProfileRepository();
         });
     }
 }

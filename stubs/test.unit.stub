@@ -6,8 +6,12 @@ use Tests\TestCase;
 
 class {{ class }} extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+    }
     /** @test */
     public function a_test_without_arguments_passes(){
-        return true
+        return true;
     }
 }

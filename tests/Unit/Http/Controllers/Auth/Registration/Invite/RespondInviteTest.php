@@ -8,26 +8,6 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
-/*
- * // an_invite_acceptance_without_arguments_fails()
- *
- * an_invite_acceptance_with_an_non_existing_invite_id_fails()
- *
- * // an_invite_acceptance_with_an_invite_id_from_an_already_declined_invite_fails()
- *
- * // an_invite_acceptance_with_an_invite_id_from_an_already_accepted_invite_fails()
- *
- * // an_invite_acceptance_with_an_invite_id_from_a_not_responded_invite_passes()
- *
- * // an_invite_declinal_without_arguments_fails()
- *
- * // an_invite_declinal_with_an_invite_id_from_an_already_declined_invite_fails()
- *
- * an_invite_declinal_with_an_invite_id_from_an_already_accepted_invite_fails()
- *
- * // an_invite_declinal_with_an_invite_id_from_a_not_responded_invite_passes()
- */
-
 class RespondInviteTest extends TestCase
 {
     use RefreshDatabase;
@@ -49,7 +29,7 @@ class RespondInviteTest extends TestCase
         $this->withoutEvents();
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'accepted_at' => null]);
         $response = $this->postJson(route('acceptInvite'));
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['invite_id' => 'Please, enter a valid invite']]]);
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'accepted_at' => null]);
     }
@@ -60,7 +40,8 @@ class RespondInviteTest extends TestCase
         $this->withoutEvents();
         $heighestInviteId = \Invite::getHeighestId();
         $response = $this->postJson(route('acceptInvite'), ['invite_id' => $heighestInviteId + 1]);
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
+        $response->assertJson(['error' => ['message' => ['invite_id' => 'Please, enter an existing invite']]]);
     }
 
     /** @test */
@@ -80,7 +61,7 @@ class RespondInviteTest extends TestCase
         $this->_declineInvite();
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'declined_at' => Date::now()]);
         $response = $this->_acceptInvite();
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => 'The invite is already responded']]);
     }
 
@@ -91,7 +72,7 @@ class RespondInviteTest extends TestCase
         $this->_acceptInvite();
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'accepted_at' => Date::now()]);
         $response = $this->_acceptInvite();
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => 'The invite is already responded']]);
 
     }
@@ -102,7 +83,7 @@ class RespondInviteTest extends TestCase
         $this->withoutEvents();
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'declined_at' => null]);
         $response = $this->postJson(route('declineInvite'));
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['invite_id' => 'Please, enter a valid invite']]]);
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'declined_at' => null]);
     }
@@ -124,7 +105,7 @@ class RespondInviteTest extends TestCase
         $this->_declineInvite();
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'declined_at' => Date::now()]);
         $response = $this->_declineInvite();
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => 'The invite is already responded']]);
     }
 
@@ -135,7 +116,7 @@ class RespondInviteTest extends TestCase
         $this->_acceptInvite();
         $this->assertDatabaseHas('invites', ['id' => $this->invite_id, 'accepted_at' => Date::now()]);
         $response = $this->_declineInvite();
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => 'The invite is already responded']]);
     }
 

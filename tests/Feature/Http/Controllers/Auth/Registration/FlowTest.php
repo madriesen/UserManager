@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Http\Controllers\Auth\Registration;
 
+use App\Account;
 use App\Email;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -10,7 +11,6 @@ use Illuminate\Support\Facades\Date;
 class FlowTest extends TestCase
 {
     use RefreshDatabase;
-
     private string $email_address;
 
     public function setUp(): void
@@ -22,7 +22,7 @@ class FlowTest extends TestCase
 
 
     /** @test */
-    public function when_a_member_request_is_created_then_an_email_is_created_in_the_database()
+    public function when_a_member_request_is_created_then_an_email_is_created()
     {
         $this->assertDatabaseMissing('emails', ['address' => $this->email_address]);
         $this->postJson(route('memberRequest'), ['email_address' => $this->email_address]);
@@ -30,7 +30,7 @@ class FlowTest extends TestCase
     }
 
     /** @test */
-    public function when_a_member_request_is_approved_then_an_invite_is_created_in_the_database()
+    public function when_a_member_request_is_approved_then_an_invite_is_created()
     {
         $this->postJson(route('memberRequest'), ['email_address' => $this->email_address]);
         $member_request = Email::all()->firstWhere('address', $this->email_address)->member_request;
@@ -39,7 +39,7 @@ class FlowTest extends TestCase
     }
 
     /** @test */
-    public function when_an_invite_is_accepted_an_account_is_created_in_the_database()
+    public function when_an_invite_is_accepted_an_account_is_created()
     {
         $this->postJson(route('memberRequest'), ['email_address' => $this->email_address]);
         $member_request = Email::all()->firstWhere('address', $this->email_address)->member_request;
@@ -47,5 +47,7 @@ class FlowTest extends TestCase
         $invite = Email::all()->firstWhere('address', $this->email_address)->invite;
         $this->postJson(route('acceptInvite'), ['invite_id' => $invite->id]);
         $this->assertDatabaseHas('accounts', ['created_at' => Date::now()]);
+        $email = Email::all()->firstWhere('address', 'test@testing.com');
+        $this->assertTrue($email->account == Account::all()->firstWhere('primary_email_id', $email->id));
     }
 }

@@ -14,15 +14,16 @@ class Created
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $invite;
+    public Int $invite_id;
 
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param Int $invite_id
      */
-    public function __construct($invite)
+    public function __construct(Int $invite_id)
     {
-        $this->invite = $invite;
+        $this->invite_id = $invite_id;
     }
+
 }

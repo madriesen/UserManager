@@ -13,21 +13,16 @@ use Illuminate\Support\Facades\Date;
 class InviteRepository implements InviteRepositoryInterface
 {
 
-    private MemberRequestRepositoryInterface $member_request_repository;
-
     /**
      * @inheritDoc
      */
-    public function __construct(MemberRequestRepositoryInterface $member_request_repository)
-    {
-        $this->member_request_repository = $member_request_repository;
-    }
-
     public function createByMemberRequestId(Int $member_request_id)
     {
-        $email = $this->member_request_repository->findById($member_request_id)->email;
+        $email = \MemberRequest::findById($member_request_id)->email;
         $invite = Invite::create();
         $invite->email()->save($email);
+
+        event(new InviteEvent\Created($invite->id));
     }
 
     /**

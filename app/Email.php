@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Email extends Model
 {
-    protected array $guarded = [];
+    protected $guarded = [];
 
     public function member_request()
     {
@@ -20,6 +20,6 @@ class Email extends Model
 
     public function account()
     {
-        return $this->belongsTo('App\Account');
+        return $this->belongsTo('App\Account', 'id');
     }
 }

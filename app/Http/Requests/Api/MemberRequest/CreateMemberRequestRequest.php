@@ -24,7 +24,7 @@ class CreateMemberRequestRequest extends FormRequest
     public function rules()
     {
         return [
-            'email_address' => 'bail|required|email',
+            'email_address' => 'bail|required|email|unique:emails,address',
             'name', 'first_name',
         ];
     }
@@ -39,6 +39,7 @@ class CreateMemberRequestRequest extends FormRequest
         return [
             'email_address.required' => 'Please, enter an email address',
             'email_address.email' => 'Please, enter a valid email address',
+            'email_address.unique' => 'This email address already exists',
         ];
     }
 

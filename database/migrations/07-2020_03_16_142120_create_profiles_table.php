@@ -20,7 +20,7 @@ class CreateProfilesTable extends Migration
             $table->string('tel')->nullable();
             $table->date('birthday')->nullable();
             $table->string('profile_picture_url')->default('/assets/profilepictures/default.png');
-            $table->foreignId('account_id')->nullable();
+            $table->foreignId('account_id');
             $table->timestamps();
 
             $table->foreign('account_id')->references('id')->on('accounts')->onDelete('cascade');

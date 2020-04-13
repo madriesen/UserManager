@@ -26,8 +26,9 @@ class CreateEmail
      */
     public function handle(Created $event)
     {
-        $email = $event->member_request->email()->create(['address' => $event->request->email_address]);
-        $email->address = $event->request->email_address;
-        $email->save();
+        \Email::createByMemberRequest($event->member_request->id, $event->request->email_address);
+//        $email = $event->member_request->email()->create(['address' => $event->request->email_address]);
+//        $email->address = $event->request->email_address;
+//        $email->save();
     }
 }

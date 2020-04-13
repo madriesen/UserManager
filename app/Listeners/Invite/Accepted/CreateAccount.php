@@ -14,7 +14,7 @@ class CreateAccount
     /**
      * Create the event listener.
      *
-     * @return void
+     * @param InviteRepositoryInterface $invite_repository
      */
     public function __construct(InviteRepositoryInterface $invite_repository)
     {

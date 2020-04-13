@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Api\MemberRequest;
+namespace App\Http\Requests\Api\Account;
+
 
 use App\Http\Requests\Api\FormRequest;
 
-class ResponseMemberRequest extends FormRequest
+class CreateAccountRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,8 +25,7 @@ class ResponseMemberRequest extends FormRequest
     public function rules()
     {
         return [
-            'member_request_id' => 'required|exists:member_requests,id',
-            'response',
+            'invite_id' => 'required|numeric|exists:invites,id'
         ];
     }
 
@@ -37,22 +37,9 @@ class ResponseMemberRequest extends FormRequest
     public function messages()
     {
         return [
-            'member_request_id.required' => 'Please, enter a valid member request id',
-            'member_request_id.exists' => 'Please, enter an existing member request id',
+            'invite_id.required' => 'Please, enter a valid invite',
+            'invite_id.numeric' => 'Please, enter a valid invite',
+            'invite_id.exists' => 'Please, enter a valid invite',
         ];
     }
-
-    /**
-     *  Filters to be applied to the input.
-     *
-     * @return array
-     */
-    public function filters()
-    {
-        return [
-            'member_request_id' => 'trim',
-        ];
-    }
-
-
 }

@@ -9,25 +9,6 @@ use Illuminate\Support\Facades\Date;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
-/*
- * // a_member_request_approval_without_arguments_fails()
- *
- * // a_member_request_approval_with_a_not_yet_replied_member_request_id_passes()
- *
- * // a_member_request_approval_with_an_already_approved_member_request_id_fails()
- *
- * a_member_request_approval_with_an_already_refused_member_request_id_fails()
- *
- * a_member_request_approval_with_a_not_yet_replied_member_request_id_passes()
- *
- * // a_member_request_refusal_without_arguments_fails()
- *
- * // a_member_request_refusal_with_an_already_approved_member_request_id_fails()
- *
- * a_member_request_refusal_with_an_already_refused_member_request_id_fails()
- *
- * // a_member_request_refusal_with_a_not_yet_replied_member_request_id_passes()
- */
 
 class RespondMemberRequestTest extends TestCase
 {
@@ -48,8 +29,18 @@ class RespondMemberRequestTest extends TestCase
         $this->withoutEvents();
         $this->assertDatabaseHas('member_requests', ['approved_at' => NULL]);
         $response = $this->postJSON(route('approveMemberRequest'));
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['member_request_id' => 'Please, enter a valid member request id']]]);
+        $this->assertDatabaseHas('member_requests', ['approved_at' => NULL]);
+    }
+
+    /** @test */
+    public function a_member_request_approval_with_a_non_existing_member_request_id_fails()
+    {
+        $this->withoutEvents();
+        $response = $this->postJson(route('approveMemberRequest'), ['member_request_id' => $this->member_request_id + 1]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
+        $response->assertJson(['error' => ['message' => ['member_request_id' => 'Please, enter an existing member request id']]]);
         $this->assertDatabaseHas('member_requests', ['approved_at' => NULL]);
     }
 
@@ -70,7 +61,7 @@ class RespondMemberRequestTest extends TestCase
     {
         $this->_approveMemberRequest();
         $response = $this->_approveMemberRequest();
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => 'The request is already responded']]);
         $this->assertDatabaseHas('member_requests', ['approved_at' => Date::now()]);
     }
@@ -80,7 +71,7 @@ class RespondMemberRequestTest extends TestCase
     {
         $this->assertDatabaseHas('member_requests', ['refused_at' => NULL]);
         $response = $this->postJSON(route('refuseMemberRequest'));
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['member_request_id' => 'Please, enter a valid member request id']]]);
         $this->assertDatabaseHas('member_requests', ['refused_at' => NULL]);
 
@@ -101,7 +92,7 @@ class RespondMemberRequestTest extends TestCase
     {
         $this->_approveMemberRequest();
         $response = $this->_refuseMemberRequest();
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => 'The request is already responded']]);
     }
 
@@ -110,7 +101,7 @@ class RespondMemberRequestTest extends TestCase
     {
         $this->_refuseMemberRequest();
         $response = $this->_refuseMemberRequest();
-        $response->assertJsonStructure(['error' => ['message']]);
+        $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => 'The request is already responded']]);
     }
 

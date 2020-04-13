@@ -233,6 +233,8 @@ return [
         'MemberRequest' => \App\Repositories\Facades\MemberRequestRepositoryFacade::class,
         'Invite' => \App\Repositories\Facades\InviteRepositoryFacade::class,
         'Account' => \App\Repositories\Facades\AccountRepositoryFacade::class,
+        'Email' => \App\Repositories\Facades\EmailRepositoryFacade::class,
+        'Profile' => \App\Repositories\Facades\ProfileRepositoryFacade::class,
 
     ],
 

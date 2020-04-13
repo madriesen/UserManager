@@ -20,10 +20,12 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\MemberRequest\Approved\CreateInvite',
         ],
         // invites
+        'App\Events\Invite\Created' => [
+            'App\Listeners\Invite\Created\SendInviteEmail'
+        ],
         'App\Events\Invite\Accepted' => [
             'App\Listeners\Invite\Accepted\CreateAccount',
         ],
-        'App\Events\Invite\Declined' => []
     ];
 
     /**
@@ -34,7 +36,6 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
         //
     }
 }

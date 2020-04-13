@@ -7,23 +7,11 @@ use App\Email;
 use App\MemberRequest;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
-use App\Repositories\Interfaces\MemberRequestRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
 
 class MemberRequestController extends Controller
 {
-    private MemberRequestRepositoryInterface $member_request_repository;
-
-    /**
-     * MemberRequestController constructor.
-     * @param MemberRequestRepositoryInterface $member_request_repository
-     */
-    public function __construct(MemberRequestRepositoryInterface $member_request_repository)
-    {
-        $this->member_request_repository = $member_request_repository;
-    }
-
     /**
      * @param CreateMemberRequestRequest $request
      * @return JsonResponse
@@ -33,7 +21,7 @@ class MemberRequestController extends Controller
         if ($this->_chkEmailIsInvalid($request))
             return Response::error('The request is already made.');
 
-        $this->member_request_repository->create($request);
+        \MemberRequest::create($request);
 
         return Response::success();
     }
@@ -44,7 +32,7 @@ class MemberRequestController extends Controller
      */
     public function response(ResponseMemberRequest $request)
     {
-        $member_request = $this->member_request_repository->findById($request->member_request_id);
+        $member_request = \MemberRequest::findById($request->member_request_id);
         if ($this->_chkMemberRequestIsInvalid($member_request))
             return Response::error('The request is already responded');
 
@@ -58,7 +46,7 @@ class MemberRequestController extends Controller
      */
     public function getAll()
     {
-        return Response::success($this->member_request_repository->all());
+        return Response::success(\MemberRequest::all());
     }
 
 
@@ -93,7 +81,7 @@ class MemberRequestController extends Controller
     {
         $response = $request->route()->getAction()['response'];
 
-        if ($response === 'approve') $this->member_request_repository->approveById($member_request->id, $request);
-        elseif ($response === 'refuse') $this->member_request_repository->refuseById($member_request->id);
+        if ($response === 'approve') \MemberRequest::approveById($member_request->id, $request);
+        elseif ($response === 'refuse') \MemberRequest::refuseById($member_request->id);
     }
 }

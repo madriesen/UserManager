@@ -16,7 +16,7 @@ class Invite extends Model
      */
     public function getRespondedAttribute(): bool
     {
-        return ($this->approved || $this->refused);
+        return ($this->accepted || $this->declined);
     }
 
     /**
