@@ -3,9 +3,9 @@
 
 namespace App\Repositories;
 
-use App\Account;
 use App\Email;
 use App\Repositories\interfaces\EmailRepositoryInterface;
+use Mockery\Exception;
 
 
 class EmailRepository implements EmailRepositoryInterface
@@ -26,7 +26,9 @@ class EmailRepository implements EmailRepositoryInterface
      */
     public function findByAddress(string $address): Email
     {
-        return Email::all()->firstWhere('address', $address);
+        $email = Email::all()->firstWhere('address', $address);
+        if (empty($email)) throw new Exception('no email found with address: ' . $address . 'in: ' . Email::all());
+        return $email;
     }
 
     /**

@@ -10,6 +10,7 @@ use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
 use App\MemberRequest;
 use App\Repositories\interfaces\MemberRequestRepositoryInterface;
 use Illuminate\Support\Facades\Date;
+use Mockery\Exception;
 
 class MemberRequestRepository implements MemberRequestRepositoryInterface
 {

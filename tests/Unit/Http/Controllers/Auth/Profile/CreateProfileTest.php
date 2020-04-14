@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Http\Controllers\Auth\Profile;
 
-use App\Email;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Tests\TestCase;
@@ -20,8 +19,8 @@ class CreateProfileTest extends TestCase
         Date::setTestNow(Date::create(2020, 4, 7, 10, 43)->toImmutable());
         $this->seed(\DatabaseSeeder::class);
         $this->postJson(route('memberRequest'), ['email_address' => 'test@testing.com']);
-        $this->postJson(route('approveMemberRequest'), ['member_request_id' => Email::all()->firstWhere('address', 'test@testing.com')->member_request->id]);
-        $this->postJson(route('acceptInvite'), ['invite_id' => Email::all()->firstWhere('address', 'test@testing.com')->invite->id]);
+        $this->postJson(route('approveMemberRequest'), ['member_request_id' => \Email::findByAddress('test@testing.com')->first()->member_request->id]);
+        $this->postJson(route('acceptInvite'), ['invite_id' => \Email::findByAddress('test@testing.com')->first()->invite->id]);
         $this->account_id = \Email::findByAddress('test@testing.com')->account->id;
     }
 

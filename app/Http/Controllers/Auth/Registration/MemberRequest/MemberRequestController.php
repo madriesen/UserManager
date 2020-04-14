@@ -3,12 +3,12 @@
 namespace App\Http\Controllers\Auth\Registration\MemberRequest;
 
 use App\Http\Controllers\Controller;
-use App\Email;
-use App\MemberRequest;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
+use App\MemberRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
+use Mockery\Exception;
 
 class MemberRequestController extends Controller
 {
@@ -60,7 +60,11 @@ class MemberRequestController extends Controller
      */
     private function _chkEmailIsInvalid(CreateMemberRequestRequest $request): bool
     {
-        $email = Email::all()->firstWhere('address', $request->email_address);
+        try {
+            $email = \Email::findByAddress($request->email_address)->first();
+        } catch (Exception $e) {
+            return false;
+        }
         return (!empty($email) && ($email->member_request->approved || !$email->member_request->refused));
     }
 
