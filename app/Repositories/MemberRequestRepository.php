@@ -8,7 +8,7 @@ use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use App\Events\MemberRequest as MemberRequestEvent;
 use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
 use App\MemberRequest;
-use App\Repositories\Interfaces\MemberRequestRepositoryInterface;
+use App\Repositories\interfaces\MemberRequestRepositoryInterface;
 use Illuminate\Support\Facades\Date;
 
 class MemberRequestRepository implements MemberRequestRepositoryInterface

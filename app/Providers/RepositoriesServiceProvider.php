@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Repositories\Interfaces\InviteRepositoryInterface;
-use App\Repositories\Interfaces\MemberRequestRepositoryInterface;
+use App\Repositories\interfaces\InviteRepositoryInterface;
+use App\Repositories\interfaces\MemberRequestRepositoryInterface;
 use App\Repositories\InviteRepository;
 use App\Repositories\MemberRequestRepository;
 use Illuminate\Support\ServiceProvider;

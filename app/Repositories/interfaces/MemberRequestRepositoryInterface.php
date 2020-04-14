@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\interfaces;
 
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;

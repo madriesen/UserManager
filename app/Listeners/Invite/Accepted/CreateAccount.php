@@ -3,9 +3,7 @@
 namespace App\Listeners\Invite\Accepted;
 
 use App\Events\Invite\Accepted;
-use App\Repositories\Interfaces\InviteRepositoryInterface;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Repositories\interfaces\InviteRepositoryInterface;
 
 class CreateAccount
 {

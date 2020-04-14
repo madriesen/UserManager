@@ -6,8 +6,7 @@ namespace App\Repositories;
 
 use App\Events\Invite as InviteEvent;
 use App\Invite;
-use App\Repositories\Interfaces\InviteRepositoryInterface;
-use App\Repositories\Interfaces\MemberRequestRepositoryInterface;
+use App\Repositories\interfaces\InviteRepositoryInterface;
 use Illuminate\Support\Facades\Date;
 
 class InviteRepository implements InviteRepositoryInterface
