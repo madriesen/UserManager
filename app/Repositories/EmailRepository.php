@@ -4,6 +4,7 @@
 namespace App\Repositories;
 
 use App\Email;
+use App\Exceptions\ModelNotFoundException;
 use App\Repositories\interfaces\EmailRepositoryInterface;
 use Mockery\Exception;
 
@@ -23,11 +24,12 @@ class EmailRepository implements EmailRepositoryInterface
 
     /**
      * @inheritDoc
+     * @throws ModelNotFoundException
      */
     public function findByAddress(string $address): Email
     {
         $email = Email::all()->firstWhere('address', $address);
-        if (empty($email)) throw new Exception('no email found with address: ' . $address . 'in: ' . Email::all());
+        if (empty($email)) throw new ModelNotFoundException('no email found with address: ' . $address . 'in: ' . Email::all());
         return $email;
     }
 

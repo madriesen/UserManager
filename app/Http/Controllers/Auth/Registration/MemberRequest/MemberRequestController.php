@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Auth\Registration\MemberRequest;
 
+use App\Exceptions\ModelNotFoundException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
 use App\MemberRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Response;
-use Mockery\Exception;
 
 class MemberRequestController extends Controller
 {
@@ -62,7 +62,7 @@ class MemberRequestController extends Controller
     {
         try {
             $email = \Email::findByAddress($request->email_address)->first();
-        } catch (Exception $e) {
+        } catch (ModelNotFoundException $e) {
             return false;
         }
         return (!empty($email) && ($email->member_request->approved || !$email->member_request->refused));
