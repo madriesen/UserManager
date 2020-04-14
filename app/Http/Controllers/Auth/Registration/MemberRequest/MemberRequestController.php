@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Http\Controllers\Auth\Registration\MemberRequest;
+namespace App\Http\Controllers\Auth\Registration\MemberRequest;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
