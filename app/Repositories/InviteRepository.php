@@ -15,7 +15,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function createByMemberRequestId(Int $member_request_id)
+    public function createByMemberRequestId(int $member_request_id)
     {
         $email = \MemberRequest::findById($member_request_id)->email;
         $invite = Invite::create();
@@ -27,7 +27,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function acceptById(Int $invite_id)
+    public function acceptById(int $invite_id)
     {
         $invite = $this->findById($invite_id);
         $invite->accepted_at = Date::now()->toImmutable();
@@ -39,7 +39,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function declineById(Int $invite_id)
+    public function declineById(int $invite_id)
     {
         $invite = $this->findById($invite_id);
         $invite->declined_at = Date::now()->toImmutable();
@@ -49,7 +49,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findById(Int $invite_id)
+    public function findById(int $invite_id)
     {
         return Invite::find($invite_id);
     }

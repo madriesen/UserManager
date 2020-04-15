@@ -5,28 +5,28 @@ namespace App\Repositories\interfaces;
 interface InviteRepositoryInterface
 {
     /**
-     * @param Int $member_request_id
+     * @param int $member_request_id
      * @return mixed
      */
-    public function createByMemberRequestId(Int $member_request_id);
+    public function createByMemberRequestId(int $member_request_id);
 
     /**
-     * @param Int $invite_id
+     * @param int $invite_id
      * @return mixed
      */
-    public function acceptById(Int $invite_id);
+    public function acceptById(int $invite_id);
 
     /**
-     * @param Int $invite_id
+     * @param int $invite_id
      * @return mixed
      */
-    public function declineById(Int $invite_id);
+    public function declineById(int $invite_id);
 
     /**
-     * @param Int $invite_id
+     * @param int $invite_id
      * @return mixed
      */
-    public function findById(Int $invite_id);
+    public function findById(int $invite_id);
 
     /**
      * @return mixed

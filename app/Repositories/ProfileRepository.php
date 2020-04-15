@@ -16,7 +16,7 @@ class ProfileRepository implements ProfileRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function createByAccountId(Int $account_id, CreateProfileRequest $data): void
+    public function createByAccountId(int $account_id, CreateProfileRequest $data): void
     {
         $account = \Account::findById($account_id);
         $profile = $account->profile()->create();
@@ -32,7 +32,7 @@ class ProfileRepository implements ProfileRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findById(Int $id): Profile
+    public function findById(int $id): Profile
     {
         return Profile::find($id);
     }

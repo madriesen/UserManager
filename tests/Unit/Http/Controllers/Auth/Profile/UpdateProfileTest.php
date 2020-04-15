@@ -11,8 +11,8 @@ class UpdateProfileTest extends TestCase
 {
     use RefreshDatabase;
 
-    private Int $account_id;
-    private Int $profile_id;
+    private int $account_id;
+    private int $profile_id;
 
     public function setUp(): void
     {

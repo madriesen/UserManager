@@ -9,10 +9,10 @@ use App\Email;
 interface EmailRepositoryInterface
 {
     /**
-     * @param Int $member_request_id
+     * @param int $member_request_id
      * @param string $address
      */
-    public function createByMemberRequest(Int $member_request_id, string $address): void;
+    public function createByMemberRequest(int $member_request_id, string $address): void;
 
     /**
      * @param string $address
@@ -21,26 +21,26 @@ interface EmailRepositoryInterface
     public function findByAddress(string $address): Email;
 
     /**
-     * @param Int $id
+     * @param int $id
      * @return Email
      */
-    public function findById(Int $id): Email;
+    public function findById(int $id): Email;
 
     /**
-     * @param Int $member_request_id
+     * @param int $member_request_id
      * @return Email
      */
-    public function findByMemberRequestId(Int $member_request_id): Email;
+    public function findByMemberRequestId(int $member_request_id): Email;
 
     /**
-     * @param Int $invite_id
+     * @param int $invite_id
      * @return Email
      */
-    public function findByInviteId(Int $invite_id): Email;
+    public function findByInviteId(int $invite_id): Email;
 
     /**
-     * @param Int $account_id
+     * @param int $account_id
      * @return Email
      */
-    public function findByAccountId(Int $account_id): Email;
+    public function findByAccountId(int $account_id): Email;
 }

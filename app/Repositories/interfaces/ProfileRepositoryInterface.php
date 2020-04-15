@@ -12,16 +12,16 @@ use Illuminate\Database\Eloquent\Collection;
 interface ProfileRepositoryInterface
 {
     /**
-     * @param Int $account_id
+     * @param int $account_id
      * @param CreateProfileRequest $data
      */
-    public function createByAccountId(Int $account_id, CreateProfileRequest $data): void;
+    public function createByAccountId(int $account_id, CreateProfileRequest $data): void;
 
     /**
-     * @param Int $id
+     * @param int $id
      * @return Profile
      */
-    public function findById(Int $id): Profile;
+    public function findById(int $id): Profile;
 
     /**
      * @param string $name

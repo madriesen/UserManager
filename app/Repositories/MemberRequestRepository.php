@@ -30,7 +30,7 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findById(Int $member_request_id)
+    public function findById(int $member_request_id)
     {
         return MemberRequest::find($member_request_id);
     }
@@ -38,7 +38,7 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function approveById(Int $member_request_id, ResponseMemberRequest $request)
+    public function approveById(int $member_request_id, ResponseMemberRequest $request)
     {
         $member_request = $this->findById($member_request_id);
         $member_request->approved_at = Date::now()->toImmutable();
@@ -50,7 +50,7 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function refuseById(Int $member_request_id)
+    public function refuseById(int $member_request_id)
     {
         $member_request = $this->findById($member_request_id);
         $member_request->refused_at = Date::now()->toImmutable();

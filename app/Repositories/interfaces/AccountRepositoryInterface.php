@@ -9,16 +9,16 @@ use App\Account;
 interface AccountRepositoryInterface
 {
     /**
-     * @param Int $invite_id
+     * @param int $invite_id
      * @return void
      */
-    public function createByInviteId(Int $invite_id): void;
+    public function createByInviteId(int $invite_id): void;
 
     /**
-     * @param Int $account_id
+     * @param int $account_id
      * @return Account
      */
-    public function findById(Int $account_id): Account;
+    public function findById(int $account_id): Account;
 
     /**
      * @param string $email_address
@@ -27,10 +27,10 @@ interface AccountRepositoryInterface
     public function findByPrimaryEmailAddress(string $email_address): Account;
 
     /**
-     * @param Int $email_id
+     * @param int $email_id
      * @return Account
      */
-    public function findByPrimaryEmailAddressId(Int $email_id): Account;
+    public function findByPrimaryEmailAddressId(int $email_id): Account;
 
     /**
      * @return Account

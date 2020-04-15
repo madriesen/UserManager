@@ -11,7 +11,7 @@ class CreateProfileTest extends TestCase
 
     use RefreshDatabase;
 
-    private Int $account_id;
+    private int $account_id;
 
     public function setUp(): void
     {

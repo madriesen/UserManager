@@ -15,7 +15,7 @@ class EmailRepository implements EmailRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function createByMemberRequest(Int $member_request_id, string $address): void
+    public function createByMemberRequest(int $member_request_id, string $address): void
     {
         $email = \MemberRequest::findById($member_request_id)->email()->create();
         $email->address = $address;
@@ -36,7 +36,7 @@ class EmailRepository implements EmailRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findById(Int $id): Email
+    public function findById(int $id): Email
     {
         return Email::find($id);
     }
@@ -44,7 +44,7 @@ class EmailRepository implements EmailRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findByMemberRequestId(Int $member_request_id): Email
+    public function findByMemberRequestId(int $member_request_id): Email
     {
         return \MemberRequest::findById($member_request_id)->email;
     }
@@ -52,7 +52,7 @@ class EmailRepository implements EmailRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findByInviteId(Int $invite_id): Email
+    public function findByInviteId(int $invite_id): Email
     {
         return \Invite::findById($invite_id)->email;
     }
@@ -60,7 +60,7 @@ class EmailRepository implements EmailRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findByAccountId(Int $account_id): Email
+    public function findByAccountId(int $account_id): Email
     {
         return \Account::findById($account_id)->email;
     }

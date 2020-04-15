@@ -10,14 +10,14 @@ class Accepted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public Int $invite_id;
+    public int $invite_id;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Int $invite_id)
+    public function __construct(int $invite_id)
     {
         $this->invite_id = $invite_id;
     }
