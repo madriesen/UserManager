@@ -6,6 +6,15 @@ A user can create a request to be member of the organisation. The administrator 
 If the administrator approves the request, the user gets an invitation.
 _The administrator can also manually send an invitation to a user by inserting an emailaddress. **(not implemented)**_
 
+## Patterns
+The application is build with the repository pattern. All repositories right now are made for Eloquent models.
 
 ## Framework
-The whole application is made with the Laravel 7.0 Framework. 
+The whole application is made with the Laravel 7.0 Framework.
+
+
+# Contribution
+## style guide
+- always use snake case
+- on adding models, create a repository with interface and facade.
+ 
