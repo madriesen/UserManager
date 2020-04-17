@@ -14,16 +14,21 @@ class CreateInviteTest extends TestCase
 
     use RefreshDatabase;
 
-    private $email_address;
-    private $member_request_id;
+    private int $member_request_id;
+    private string $token;
 
     public function setUp(): void
     {
         parent::setUp();
+        $this->seed(\DatabaseSeeder::class);
         Date::setTestNow(Date::create(2020, 4, 7, 10, 43)->toImmutable());
-        $this->email_address = 'test@testing.com';
-        $this->postJson(route('memberRequest'), ['email_address' => $this->email_address]);
-        $this->member_request_id = Email::firstWhere('address', $this->email_address)->member_request->id;
+        $email_address = 'test@testing.com';
+        $this->postJson(route('memberRequest'), ['email_address' => $email_address]);
+        $this->member_request_id = Email::firstWhere('address', $email_address)->member_request->id;
+
+        $response = $this->postJson(route('login'), ['email_address' => 'admin@test.be', 'password' => 'test1234']);
+        $this->token = $response['data']['token'];
+        $this->withHeaders($this->_headers());
     }
 
     /** @test */
@@ -65,7 +70,7 @@ class CreateInviteTest extends TestCase
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
         $response = $this->postJson(route('invite'), ['member_request_id' => $this->member_request_id]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
-        $response->assertJson(['error' => ['message' => 'Please, enter a valid member request']]);
+        $response->assertJson(['error' => ['message' => ['member_request' => 'Please, enter a valid member request']]]);
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
     }
 
@@ -74,10 +79,10 @@ class CreateInviteTest extends TestCase
     {
         $this->withoutEvents();
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
-        $this->postJson(route('refuseMemberRequest'), ['member_request_id' => $this->member_request_id]);
+        $this->withHeaders($this->_headers())->postJson(route('refuseMemberRequest'), ['member_request_id' => $this->member_request_id]);
         $response = $this->postJson(route('invite'), ['member_request_id' => $this->member_request_id]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
-        $response->assertJson(['error' => ['message' => 'Please, enter a valid member request']]);
+        $response->assertJson(['error' => ['message' => ['member_request' => 'Please, enter a valid member request']]]);
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
     }
 
@@ -86,10 +91,22 @@ class CreateInviteTest extends TestCase
     {
         $this->withoutEvents();
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
-        $this->postJson(route('approveMemberRequest'), ['member_request_id' => $this->member_request_id]);
+        $this->withHeaders($this->_headers())->postJson(route('approveMemberRequest'), ['member_request_id' => $this->member_request_id]);
         $response = $this->postJson(route('invite'), ['member_request_id' => $this->member_request_id]);
         $response->assertJsonStructure(['success']);
         $response->assertJson(['success' => true]);
         $this->assertDatabaseHas('invites', ['created_at' => Date::now()]);
+    }
+
+
+    /**
+     * @return string[]
+     */
+    private function _headers(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json'
+        ];
     }
 }

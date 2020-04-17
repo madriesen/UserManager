@@ -2,10 +2,14 @@
 
 namespace App;
 
+use Illuminate\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Laravel\Sanctum\HasApiTokens;
 
 class Account extends Model
 {
+    use Authenticatable, HasApiTokens;
+
     protected $guarded = [];
     protected $hidden = ['password'];
 

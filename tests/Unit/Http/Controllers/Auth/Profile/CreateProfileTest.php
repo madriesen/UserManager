@@ -12,13 +12,18 @@ class CreateProfileTest extends TestCase
     use RefreshDatabase;
 
     private int $account_id;
+    private string $token;
 
     public function setUp(): void
     {
         parent::setUp();
         Date::setTestNow(Date::create(2020, 4, 7, 10, 43)->toImmutable());
         $this->seed(\DatabaseSeeder::class);
+        $response = $this->postJson(route('login'), ['email_address' => 'admin@test.be', 'password' => 'test1234']);
+        $this->token = $response['data']['token'];
+
         $this->postJson(route('memberRequest'), ['email_address' => 'test@testing.com']);
+        $this->withHeaders($this->_headers());
         $this->postJson(route('approveMemberRequest'), ['member_request_id' => \Email::findByAddress('test@testing.com')->first()->member_request->id]);
         $this->postJson(route('acceptInvite'), ['invite_id' => \Email::findByAddress('test@testing.com')->first()->invite->id]);
         $this->account_id = \Email::findByAddress('test@testing.com')->account->id;
@@ -90,7 +95,7 @@ class CreateProfileTest extends TestCase
         $this->assertDatabaseMissing('profiles', array_merge($this->setValidData(), ['created_at' => Date::now()]));
         $response = $this->postJson(route('profile'), $this->setValidData());
         $response->assertJsonStructure(['success', 'data']);
-        $this->assertDatabaseHas('profiles', array_merge($this->setValidData(), ['created_at' => Date::now()]));
+        $this->assertDatabaseHas('profiles', array_merge($this->setValidData(), ['created_at' => Date::now(), 'birthday' => Date::create('1998/11/05')]));
         $this->assertTrue(\Account::findById($this->account_id)->profile == \Profile::findByName('Doe')->first());
         $this->assertTrue(\Account::findById($this->account_id) == \Profile::findByName('Doe')->first()->account);
     }
@@ -105,7 +110,18 @@ class CreateProfileTest extends TestCase
             'name' => 'Doe',
             'first_name' => 'John',
             'tel' => '0032471359627',
-            'birthday' => Date::create(1998, 11, 05)->toImmutable(),
+            'birthday' => '1998/11/05',
+        ];
+    }
+
+    /**
+     * @return string[]
+     */
+    private function _headers(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json'
         ];
     }
 }

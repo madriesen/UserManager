@@ -6,7 +6,6 @@ namespace App\Repositories;
 use App\Email;
 use App\Exceptions\ModelNotFoundException;
 use App\Repositories\interfaces\EmailRepositoryInterface;
-use Mockery\Exception;
 
 
 class EmailRepository implements EmailRepositoryInterface

@@ -17,10 +17,15 @@ class CreateAccountTest extends TestCase
     {
         parent::setUp();
         Date::setTestNow(Date::create(2020, 4, 7, 10, 43)->toImmutable());
+        $this->seed(\DatabaseSeeder::class);
+        $response = $this->postJson(route('login'), ['email_address' => 'admin@test.be', 'password' => 'test1234']);
+        $this->token = $response['data']['token'];
+
+        $this->withHeaders($this->_headers());
+
         \MemberRequest::create(new CreateMemberRequestRequest(['email_address' => 'test@testing.com']));
         \Invite::createByMemberRequestId(\Email::findByAddress('test@testing.com')->first()->member_request->id);
         $this->invite_id = \Email::findByAddress('test@testing.com')->first()->invite->id;
-        $this->seed(\DatabaseSeeder::class);
     }
 
     /** @test */
@@ -35,11 +40,9 @@ class CreateAccountTest extends TestCase
     public function an_account_creation_without_arguments_fails()
     {
         $this->withoutEvents();
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
         $response = $this->postJson(route('account'));
         $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['invite_id' => 'Please, enter a valid invite']]]);
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
     }
 
     /** @test */
@@ -55,22 +58,20 @@ class CreateAccountTest extends TestCase
     public function an_account_creation_with_an_non_existing_invite_id_fails()
     {
         $this->withoutEvents();
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
+        $account_id = \Account::getHighestId();
         $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id + 1]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['invite_id' => 'Please, enter a valid invite']]]);
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
+        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now(), 'id' => $account_id + 1]);
     }
 
     /** @test */
     public function an_account_creation_with_a_not_yet_responded_invite_id_fails()
     {
         $this->withoutEvents();
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
         $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
-        $response->assertJson(['error' => ['message' => 'The invite is not yet responded']]);
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
+        $response->assertJson(['error' => ['message' => ['invite' => 'The invite is not yet responded']]]);
     }
 
     /** @test */
@@ -78,10 +79,9 @@ class CreateAccountTest extends TestCase
     {
         $this->withoutEvents();
         \Invite::declineById($this->invite_id);
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
         $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
-        $response->assertJson(['error' => ['message' => 'The invite is declined']]);
+        $response->assertJson(['error' => ['message' => ['invite' => 'The invite is declined']]]);
     }
 
     /** @test */
@@ -89,9 +89,21 @@ class CreateAccountTest extends TestCase
     {
         $this->withoutEvents();
         \Invite::acceptById($this->invite_id);
-        $this->assertDatabaseMissing('accounts', ['created_at' => Date::now()]);
         $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id]);
         $response->assertJsonStructure(['success']);
         $this->assertDatabaseHas('accounts', ['created_at' => Date::now()]);
+    }
+
+
+
+    /**
+     * @return string[]
+     */
+    private function _headers(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json'
+        ];
     }
 }

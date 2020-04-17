@@ -2,7 +2,11 @@
 
 namespace App\Exceptions;
 
+use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -29,10 +33,10 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param \Throwable $exception
+     * @param Throwable $exception
      * @return void
      *
-     * @throws \Exception
+     * @throws Exception
      */
     public function report(Throwable $exception)
     {
@@ -42,24 +46,18 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Throwable $exception
+     * @param Request $request
+     * @param Throwable $exception
      * @return \Symfony\Component\HttpFoundation\Response
      *
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function render($request, Throwable $exception)
     {
-//        if ($this->isHttpException($exception)) {
-//
-//            switch ($exception->getStatusCode()) {
-//                case 405:
-//                    return response()->json(['error' => ['message' => 'Method not allowed']]);
-//                    break;
-//            }
-
-//    }
-
+        if ($exception instanceof ModelNotFoundException)
+            return Response::error('request', $exception->getMessage());
+        if ($exception instanceof AuthenticationException)
+            return Response::error('request', $exception->getMessage());
 
         return parent::render($request, $exception);
     }

@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
 
 class Kernel extends HttpKernel
 {
@@ -28,17 +29,18 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $middlewareGroups = [
-        'web' => [
-            \App\Http\Middleware\EncryptCookies::class,
-            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
-            \Illuminate\Session\Middleware\StartSession::class,
-            // \Illuminate\Session\Middleware\AuthenticateSession::class,
-            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
-            \App\Http\Middleware\VerifyCsrfToken::class,
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        ],
+//        'web' => [
+//            \App\Http\Middleware\EncryptCookies::class,
+//            \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+//            \Illuminate\Session\Middleware\StartSession::class,
+//            // \Illuminate\Session\Middleware\AuthenticateSession::class,
+//            \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+//            \App\Http\Middleware\VerifyCsrfToken::class,
+//            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+//        ],
 
         'Api' => [
+            EnsureFrontendRequestsAreStateful::class,
             'throttle:60,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],

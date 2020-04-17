@@ -33,7 +33,18 @@ interface AccountRepositoryInterface
     public function findByPrimaryEmailAddressId(int $email_id): Account;
 
     /**
-     * @return Account
+     * @return int
+     */
+    public function getHighestId(): int;
+
+    /**
+     * @param int $id
+     * @param string $password
+     */
+    public function updatePassword(int $id, string $password): void;
+
+    /**
+     * @return Mixed
      */
     public function all();
 }

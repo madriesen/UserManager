@@ -14,9 +14,9 @@ class AccountController extends Controller
     {
         $invite = \Invite::findById($request->invite_id);
         if (!$invite->responded)
-            return Response::error('The invite is not yet responded');
+            return Response::error('invite', 'The invite is not yet responded');
         if ($invite->declined)
-            return Response::error('The invite is declined');
+            return Response::error('invite', 'The invite is declined');
 
         \Account::createByInviteId($request->invite_id);
         return Response::success();

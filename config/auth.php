@@ -36,9 +36,14 @@ return [
     */
 
     'guards' => [
+        'web' => [
+            'driver' => 'token',
+            'provider' => 'accounts',
+            'hash' => false,
+        ],
         'Api' => [
             'driver' => 'token',
-            'provider' => 'users',
+            'provider' => 'accounts',
             'hash' => false,
         ],
     ],
@@ -63,8 +68,13 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => App\User::class,
+            'model' => App\Users::class,
         ],
+
+        'accounts' => [
+            'driver' => 'eloquent',
+            'model' => App\Account::class,
+        ]
 
         // 'users' => [
         //     'driver' => 'database',

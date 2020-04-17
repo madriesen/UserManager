@@ -15,7 +15,7 @@ class InviteController extends Controller
     {
         $member_request = MemberRequest::find($request->member_request_id);
         if ($this->_MemberRequestIsInvalid($member_request))
-            return Response::error('Please, enter a valid member request');
+            return Response::error('member_request', 'Please, enter a valid member request');
 
         \Invite::createByMemberRequestId($member_request->id);
 
@@ -26,7 +26,7 @@ class InviteController extends Controller
     {
         $invite = Invite::find($request->invite_id);
         if ($this->_InviteIsInvalid($invite))
-            return Response::error('The invite is already responded');
+            return Response::error('invite', 'The invite is already responded');
 
         $this->_AcceptOrDeclineByResponse($request);
 

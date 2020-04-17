@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Events\Invite as InviteEvent;
+use App\Exceptions\ModelNotFoundException;
 use App\Invite;
 use App\Repositories\interfaces\InviteRepositoryInterface;
 use Illuminate\Support\Facades\Date;
@@ -15,7 +16,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function createByMemberRequestId(int $member_request_id)
+    public function createByMemberRequestId(int $member_request_id): void
     {
         $email = \MemberRequest::findById($member_request_id)->email;
         $invite = Invite::create();
@@ -27,7 +28,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function acceptById(int $invite_id)
+    public function acceptById(int $invite_id): void
     {
         $invite = $this->findById($invite_id);
         $invite->accepted_at = Date::now()->toImmutable();
@@ -39,7 +40,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function declineById(int $invite_id)
+    public function declineById(int $invite_id): void
     {
         $invite = $this->findById($invite_id);
         $invite->declined_at = Date::now()->toImmutable();
@@ -49,7 +50,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function findById(int $invite_id)
+    public function findById(int $invite_id): Invite
     {
         return Invite::find($invite_id);
     }
@@ -57,7 +58,7 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function getHeighestId()
+    public function getHighestId(): int
     {
         return Invite::max('id');
     }
@@ -68,5 +69,17 @@ class InviteRepository implements InviteRepositoryInterface
     public function all()
     {
         return Invite::all();
+    }
+
+    /**
+     * @inheritDoc
+     * @throws ModelNotFoundException
+     */
+    public function findByEmailAddress(string $address): Invite
+    {
+        $email = \Email::findByAddress($address);
+        if (empty($email->invite)) throw new ModelNotFoundException('No invite found for ' . $address);
+        return $email->invite;
+
     }
 }

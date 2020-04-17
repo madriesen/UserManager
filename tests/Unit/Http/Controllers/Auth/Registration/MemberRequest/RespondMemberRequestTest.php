@@ -3,7 +3,6 @@
 namespace Tests\Unit\Http\Controllers\Auth\Registration\MemberRequest;
 
 use App\Email;
-use App\MemberRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Testing\TestResponse;
@@ -13,14 +12,20 @@ use Tests\TestCase;
 class RespondMemberRequestTest extends TestCase
 {
     use RefreshDatabase;
-    private $member_request_id;
+
+    private int $member_request_id;
+    private string $token;
 
     public function setUp(): void
     {
         parent::setUp();
+        $this->seed(\DatabaseSeeder::class);
         Date::setTestNow(Date::create(2020, 4, 7, 10, 43)->toImmutable());
         $this->postJson(route('memberRequest'), ['email_address' => 'test@testing.com']);
         $this->member_request_id = Email::all()->firstWhere('address', 'test@testing.com')->member_request->id;
+        $response = $this->postJson(route('login'), ['email_address' => 'admin@test.be', 'password' => 'test1234']);
+        $this->token = $response['data']['token'];
+        $this->withHeaders($this->_headers());
     }
 
     /** @test */
@@ -52,7 +57,7 @@ class RespondMemberRequestTest extends TestCase
         $response = $this->_approveMemberRequest();
         $response->assertJsonStructure(['success']);
         $response->assertJson(['success' => true]);
-        $this->assertDatabaseMissing('member_requests', ['approved_at' => NULL]);
+        $this->assertDatabaseMissing('member_requests', ['approved_at' => NULL, 'id' => $this->member_request_id]);
     }
 
 
@@ -62,8 +67,8 @@ class RespondMemberRequestTest extends TestCase
         $this->_approveMemberRequest();
         $response = $this->_approveMemberRequest();
         $response->assertJsonStructure(['error' => ['message' => []]]);
-        $response->assertJson(['error' => ['message' => 'The request is already responded']]);
-        $this->assertDatabaseHas('member_requests', ['approved_at' => Date::now()]);
+        $response->assertJson(['error' => ['message' => ['member_request' => 'The request is already responded']]]);
+        $this->assertDatabaseHas('member_requests', ['approved_at' => Date::now(), 'id' => $this->member_request_id]);
     }
 
     /** @test */
@@ -84,7 +89,7 @@ class RespondMemberRequestTest extends TestCase
         $response = $this->_refuseMemberRequest();
         $response->assertJsonStructure(['success']);
         $response->assertJson(['success' => true]);
-        $this->assertDatabaseMissing('member_requests', ['refused_at' => NULL]);
+        $this->assertDatabaseMissing('member_requests', ['refused_at' => NULL, 'id' => $this->member_request_id]);
     }
 
     /** @test */
@@ -93,7 +98,7 @@ class RespondMemberRequestTest extends TestCase
         $this->_approveMemberRequest();
         $response = $this->_refuseMemberRequest();
         $response->assertJsonStructure(['error' => ['message' => []]]);
-        $response->assertJson(['error' => ['message' => 'The request is already responded']]);
+        $response->assertJson(['error' => ['message' => ['member_request' => 'The request is already responded']]]);
     }
 
     /** @test */
@@ -102,7 +107,7 @@ class RespondMemberRequestTest extends TestCase
         $this->_refuseMemberRequest();
         $response = $this->_refuseMemberRequest();
         $response->assertJsonStructure(['error' => ['message' => []]]);
-        $response->assertJson(['error' => ['message' => 'The request is already responded']]);
+        $response->assertJson(['error' => ['message' => ['member_request' => 'The request is already responded']]]);
     }
 
     /**
@@ -110,7 +115,7 @@ class RespondMemberRequestTest extends TestCase
      */
     public function _approveMemberRequest(): TestResponse
     {
-        return $this->postJSON(route('approveMemberRequest'), ['member_request_id' => $this->member_request_id]);
+        return $this->postJSON(route('approveMemberRequest'), $this->_validData());
     }
 
     /**
@@ -118,6 +123,25 @@ class RespondMemberRequestTest extends TestCase
      */
     public function _refuseMemberRequest(): TestResponse
     {
-        return $this->postJSON(route('refuseMemberRequest'), ['member_request_id' => $this->member_request_id]);
+        return $this->postJSON(route('refuseMemberRequest'), $this->_validData());
+    }
+
+    /**
+     * @return string[]
+     */
+    private function _headers(): array
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->token,
+            'Accept' => 'application/json'
+        ];
+    }
+
+    /**
+     * @return int[]
+     */
+    private function _validData(): array
+    {
+        return ['member_request_id' => $this->member_request_id];
     }
 }

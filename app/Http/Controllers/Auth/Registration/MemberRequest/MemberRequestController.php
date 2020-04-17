@@ -19,7 +19,7 @@ class MemberRequestController extends Controller
     public function __invoke(CreateMemberRequestRequest $request)
     {
         if ($this->_chkEmailIsInvalid($request))
-            return Response::error('The request is already made.');
+            return Response::error('email_address', 'The request is already made.');
 
         \MemberRequest::create($request);
 
@@ -34,7 +34,7 @@ class MemberRequestController extends Controller
     {
         $member_request = \MemberRequest::findById($request->member_request_id);
         if ($this->_chkMemberRequestIsInvalid($member_request))
-            return Response::error('The request is already responded');
+            return Response::error('member_request', 'The request is already responded');
 
         $this->_approveOrRefuseAccordingToResponse($request, $member_request);
 
@@ -65,7 +65,7 @@ class MemberRequestController extends Controller
         } catch (ModelNotFoundException $e) {
             return false;
         }
-        return (!empty($email) && ($email->member_request->approved || !$email->member_request->refused));
+        return (($email->member_request->approved || !$email->member_request->refused));
     }
 
     /**
@@ -84,7 +84,6 @@ class MemberRequestController extends Controller
     private function _approveOrRefuseAccordingToResponse(ResponseMemberRequest $request, MemberRequest $member_request): void
     {
         $response = $request->route()->getAction()['response'];
-
         if ($response === 'approve') \MemberRequest::approveById($member_request->id, $request);
         elseif ($response === 'refuse') \MemberRequest::refuseById($member_request->id);
     }

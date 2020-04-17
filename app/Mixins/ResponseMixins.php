@@ -15,8 +15,8 @@ class ResponseMixins
 
     public function error()
     {
-        return function ($message) {
-            return response()->json(['error' => ['message' => $message]]);
+        return function ($property = null, $message = 'something went wrong') {
+            return response()->json(['error' => ['message' => [$property => $message]]]);
         };
     }
 }
