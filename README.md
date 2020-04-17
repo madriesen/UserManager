@@ -48,7 +48,7 @@ The whole application is made with the Laravel 7.0 Framework.
 
 | Route        | Name               | Arguments                          |
 |--------------|--------------------|------------------------------------|
-|`/create`     |Profile             |`account_id` => required<br />`first_name` => required<br />`name` => required, `tel`, `birthday`, `profile_picture_url`|
+|`/create`     |Profile             |`account_id` => required<br />`first_name` => required<br />`name` => required<br />`tel`<br />`birthday`<br />`profile_picture_url`|
 |`/update`     |updateProfile       |`profile_id` => required<br />`first_name`<br />`name`<br />`tel`<br />`birthday`, `profile_picture_url`|
 
 ### Login routes:
