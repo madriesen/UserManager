@@ -235,6 +235,7 @@ return [
         'Account' => \App\Repositories\Facades\AccountRepositoryFacade::class,
         'Email' => \App\Repositories\Facades\EmailRepositoryFacade::class,
         'Profile' => \App\Repositories\Facades\ProfileRepositoryFacade::class,
+        'AccountType' => \App\Repositories\Facades\AccountTypeRepositoryFacade::class,
 
     ],
 

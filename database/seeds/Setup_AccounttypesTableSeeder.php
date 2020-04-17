@@ -1,6 +1,5 @@
 <?php
 
-use App\AccountType;
 use Illuminate\Database\Seeder;
 
 class Setup_AccounttypesTableSeeder extends Seeder
@@ -18,6 +17,6 @@ class Setup_AccounttypesTableSeeder extends Seeder
             ['title' => 'default', 'description' => 'default user'],
         ];
 
-        foreach ($types as $type) AccountType::create($type);
+        foreach ($types as $type) \AccountType::create($type['title'], $type['description']);
     }
 }

@@ -19,7 +19,6 @@ class FlowTest extends TestCase
         $this->email_address = 'test@testing.com';
         Date::setTestNow(Date::create(2020, 4, 7, 10, 43)->toImmutable());
         $this->seed(\DatabaseSeeder::class);
-
     }
 
 

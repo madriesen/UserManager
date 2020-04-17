@@ -22,7 +22,7 @@ class SuperUserSeeder extends Seeder
         $account = $email->account()->create();
         $this->_setPrimaryEmailAddress($email, $account);
         $this->_setPassword($account, 'test1234');
-        \App\AccountType::all()->firstwhere('title', 'administrator')->accounts()->save($account);
+        \AccountType::findByTitle('administrator')->accounts()->save($account);
     }
 
     /**

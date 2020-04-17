@@ -55,3 +55,10 @@ Route::group(['namespace' => 'Auth', 'middleware' => 'Api', 'prefix' => 'authent
     })->name('checkLogin');
 });
 
+Route::group(['namespace' => 'Auth\Account', 'middleware' => 'Api', 'prefix' => 'accounttype'], function () {
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::post('/create', 'AccountTypesController')->name('accountType');
+        Route::post('/update', 'AccountTypesController@update')->name('updateAccountType');
+    });
+});
+

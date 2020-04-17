@@ -5,7 +5,6 @@ namespace App\Repositories;
 
 
 use App\Account;
-use App\AccountType;
 use App\Exceptions\ModelNotFoundException;
 use App\Repositories\interfaces\AccountRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -23,7 +22,8 @@ class AccountRepository implements AccountRepositoryInterface
         $account = $email->account()->create();
         $this->_setPrimaryEmailAddress($email, $account);
         $this->_setPassword($account, Str::random(32));
-        AccountType::all()->firstwhere('title', 'default')->accounts()->save($account);
+        \AccountType::findByTitle('default')->accounts()->save($account);
+//        AccountType::all()->firstwhere('title', 'default')->accounts()->save($account);
     }
 
     /**
