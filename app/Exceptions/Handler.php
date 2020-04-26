@@ -60,7 +60,7 @@ class Handler extends ExceptionHandler
             return Response::error('request', $exception->getMessage());
         if ($exception instanceof ArgumentNotSetException)
             return Response::error('request', $exception->getMessage());
-        if ($exception instanceof EmailAlreadyExists)
+        if ($exception instanceof InvalidEmailException)
             return Response::error('request', $exception->getMessage());
 
         return parent::render($request, $exception);

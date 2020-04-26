@@ -6,6 +6,7 @@ namespace App\Repositories;
 
 use App\Events\MemberRequest as MemberRequestEvent;
 use App\Exceptions\EmailAlreadyExists;
+use App\Exceptions\InvalidEmailException;
 use App\Exceptions\ModelNotFoundException;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use App\MemberRequest;
@@ -22,9 +23,11 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
      */
     public function create(CreateMemberRequestRequest $request): string
     {
+        if (empty($request->email_address))
+            throw new InvalidEmailException('No email address given');
         if ($this->_chkEmailExists($request->email_address))
             if (Date::now()->diffInDays(\Email::findByAddress($request->email_address)->member_request->refused_at) < 14)
-                throw new EmailAlreadyExists($request->email_address);
+                throw new InvalidEmailException('Email already exists');
 
         $this->_create();
         $this->_setUUID();
