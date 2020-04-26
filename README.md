@@ -18,7 +18,7 @@ The whole application is made with the Laravel 7.0 Framework.
 
 | Route        | Name               | Arguments                                       |
 |--------------|--------------------|-------------------------------------------------|
-|`/create`     |memberRequest       |`email_address` => required, `name`, `first_name`|
+|`/create`     |memberRequest       |`email_address` => required<br />`name`<br />`first_name`|
 |`/approve`    |approveMemberRequest|`member_request_id` => required                  |
 |`/decline`    |declineMemberRequest|`member_request_id` => required                  |
 |`/all`        |getAllMemberRequests|none|
@@ -48,15 +48,15 @@ The whole application is made with the Laravel 7.0 Framework.
 
 | Route        | Name               | Arguments                          |
 |--------------|--------------------|------------------------------------|
-|`/create`     |Profile             |`account_id` => required, `first_name` => required, `name` => required, `tel`, `birthday`, `profile_picture_url`|
-|`/update`     |updateProfile       |`profile_id` => required, `first_name`, `name`,`tel`, `birthday`, `profile_picture_url`|
+|`/create`     |Profile             |`account_id` => required<br />`first_name` => required<br />`name` => required<br />`tel`<br />`birthday`<br />`profile_picture_url`|
+|`/update`     |updateProfile       |`profile_id` => required<br />`first_name`<br />`name`<br />`tel`<br />`birthday`, `profile_picture_url`|
 
 ### Login routes:
 **prefix:** /api/authentication
 
 | Route        | Name               | Arguments                          |
 |--------------|--------------------|------------------------------------|
-|`/login`      |login               |`email_address`=> required, `password`=> required|
+|`/login`      |login               |`email_address`=> required<br />`password`=> required|
 |`/checkLogin` |checkLogin          |none|
 
 ### Account types routes:
@@ -64,8 +64,13 @@ The whole application is made with the Laravel 7.0 Framework.
 
 | Route        | Name               | Arguments                          |
 |--------------|--------------------|------------------------------------|
+<<<<<<< HEAD
 |`/create`     |accountType         |`title` => require, `description` => required|
 |`/update`     |updateAccountType   |`account_type_id` => required, `title`, `description`|
+=======
+|`/create`     |accountType         |`title` => required<br />`description` => required|
+|`/update`     |updateAccountType   |`account_type_id` => required<br />`title`<br />`description`|
+>>>>>>> 8ceb94e6e97c050c980dfe74122ad317c6cef0a9
 
 # Contribution
 ## style guide
