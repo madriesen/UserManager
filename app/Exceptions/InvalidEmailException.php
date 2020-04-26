@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class EmailAlreadyExists extends Exception
+class InvalidEmailException extends Exception
 {
     //
 }
