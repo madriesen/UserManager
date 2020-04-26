@@ -2,16 +2,50 @@
 
 namespace Tests\Unit\Http\Controllers\Auth\Registration\MemberRequest;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class MemberRequestRoutesTest extends TestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
+    use RefreshDatabase;
+
+    private string $email_address = 'test@testing.com';
+    private string $name = 'driesen';
+    private string $first_name = 'martijn';
+
     /** @test */
-    public function a_test_without_arguments_passes(){
-        return true;
+    public function a_member_request_create_route_exists()
+    {
+        $response = $this->postJson(route('member_request'), ['email_address' => $this->email_address]);
+        $response->assertStatus(200);
+    }
+
+    /** @test */
+    public function a_member_request_approval_route_exists()
+    {
+        $response = $this->postJson(route('approve_member_request'));
+        $response->assertSuccessful();
+    }
+
+    /** @test */
+    public function a_member_request_approval_must_be_done_by_an_authenticated_user()
+    {
+        $response = $this->postJson(route('approve_member_request'));
+        $response->assertJson(['error' => ['message' => ['request' => 'Unauthenticated.']]]);
+    }
+
+    /** @test */
+    public function a_member_request_refusal_route_exists()
+    {
+        $response = $this->postJson(route('refuse_member_request'));
+        $response->assertSuccessful();
+    }
+
+
+    /** @test */
+    public function a_member_request_refusal_must_be_done_by_an_authenticated_user()
+    {
+        $response = $this->postJson(route('refuse_member_request'));
+        $response->assertJson(['error' => ['message' => ['request' => 'Unauthenticated.']]]);
     }
 }
