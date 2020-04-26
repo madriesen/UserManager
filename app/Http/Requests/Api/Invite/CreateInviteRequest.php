@@ -24,7 +24,7 @@ class CreateInviteRequest extends FormRequest
     public function rules()
     {
         return [
-            'member_request_id' => 'required|numeric|exists:member_requests,id',
+            'member_request_uuid' => 'required|numeric|exists:member_requests,uuid',
         ];
     }
 
@@ -36,9 +36,9 @@ class CreateInviteRequest extends FormRequest
     public function messages()
     {
         return [
-            'member_request_id.required' => 'Please, enter a valid member request',
-            'member_request_id.numeric' => 'Please, enter a valid member request',
-            'member_request_id.exists' => 'Please, enter an existing member request',
+            'member_request_uuid.required' => 'Please, enter a valid member request',
+            'member_request_uuid.numeric' => 'Please, enter a valid member request',
+            'member_request_uuid.exists' => 'Please, enter an existing member request',
         ];
     }
 }

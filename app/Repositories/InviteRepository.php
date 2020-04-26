@@ -5,7 +5,10 @@ namespace App\Repositories;
 
 
 use App\Events\Invite as InviteEvent;
+use App\Exceptions\ArgumentNotSetException;
+use App\Exceptions\InvalidEmailException;
 use App\Exceptions\ModelNotFoundException;
+use App\Http\Requests\Api\Invite\CreateInviteRequest;
 use App\Invite;
 use App\Repositories\interfaces\InviteRepositoryInterface;
 use Illuminate\Support\Facades\Date;
@@ -13,18 +16,73 @@ use Illuminate\Support\Str;
 
 class InviteRepository implements InviteRepositoryInterface
 {
+    private Invite $invite;
 
     /**
      * @inheritDoc
      */
-    public function createByMemberRequestId(int $member_request_id): void
+    public function createByMemberRequestUUID(CreateInviteRequest $request): string
     {
-        $email = \MemberRequest::findById($member_request_id)->email;
-        $invite = Invite::create();
-        $this->_setToken($invite, Str::random(32));
-        $this->_setEmail($invite, $email);
+        $member_request = $this->_chkMemberRequest($request->member_request_uuid);
 
-        event(new InviteEvent\Created($invite->id));
+        $this->invite = Invite::create();
+        $this->_setUUID();
+        $this->_setToken(Str::random(32));
+        $this->_setEmail($member_request->email);
+
+        event(new InviteEvent\Created($this->invite->id));
+
+        return $this->invite->uuid;
+    }
+
+    /**
+     * @param string|null $member_request_uuid
+     * @return mixed
+     * @throws ArgumentNotSetException
+     * @throws InvalidEmailException
+     */
+    private function _chkMemberRequest(?string $member_request_uuid)
+    {
+        if (empty($member_request_uuid))
+            throw new ArgumentNotSetException('Please, enter a member request');
+
+        try {
+            $member_request = \MemberRequest::findByUUID($member_request_uuid);
+        } catch (ModelNotFoundException $e) {
+            throw new ArgumentNotSetException('Please, enter an existing member request');
+        }
+
+        if (!$member_request->approved)
+            throw new ArgumentNotSetException('Please, enter an approved member request');
+
+        if (!empty($member_request->email->invite))
+            throw new InvalidEmailException('This email is already invited');
+        return $member_request;
+    }
+
+    /**
+     */
+    private function _setUUID(): void
+    {
+        $this->invite->uuid = Str::uuid()->toString();
+    }
+
+    /**
+     * @param string $token
+     */
+    private function _setToken(string $token): void
+    {
+        $this->invite->token = $token;
+        $this->invite->save();
+    }
+
+    /**
+     * @param $email
+     */
+    private function _setEmail($email): void
+    {
+        $this->invite->email()->save($email);
+        $this->invite->save();
     }
 
     /**
@@ -32,11 +90,16 @@ class InviteRepository implements InviteRepositoryInterface
      */
     public function acceptByToken(string $token): void
     {
-        $invite = $this->findByToken($token);
-        $invite->accepted_at = Date::now()->toImmutable();
-        $invite->save();
+        $this->invite = $this->findByToken($token);
+        $this->invite->accepted_at = Date::now()->toImmutable();
+        $this->invite->save();
 
-        event(new InviteEvent\Accepted($invite->id));
+        event(new InviteEvent\Accepted($this->invite->id));
+    }
+
+    public function findByToken(string $token): Invite
+    {
+        return Invite::all()->firstWhere('token', $token);
     }
 
     /**
@@ -82,31 +145,5 @@ class InviteRepository implements InviteRepositoryInterface
         $email = \Email::findByAddress($address);
         if (empty($email->invite)) throw new ModelNotFoundException('No invite found for ' . $address);
         return $email->invite;
-    }
-
-
-    /**
-     * @param string $token
-     * @param Invite $invite
-     */
-    private function _setToken(Invite $invite, string $token): void
-    {
-        $invite->token = $token;
-        $invite->save();
-    }
-
-    /**
-     * @param $invite
-     * @param $email
-     */
-    private function _setEmail($invite, $email): void
-    {
-        $invite->email()->save($email);
-        $invite->save();
-    }
-
-    public function findByToken(string $token): Invite
-    {
-        return Invite::all()->firstWhere('token', $token);
     }
 }

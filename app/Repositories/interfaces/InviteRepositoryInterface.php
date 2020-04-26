@@ -2,15 +2,16 @@
 
 namespace App\Repositories\interfaces;
 
+use App\Http\Requests\Api\Invite\CreateInviteRequest;
 use App\Invite;
 
 interface InviteRepositoryInterface
 {
     /**
-     * @param int $member_request_id
-     * @return void
+     * @param CreateInviteRequest $request
+     * @return string
      */
-    public function createByMemberRequestId(int $member_request_id): void;
+    public function createByMemberRequestUUID(CreateInviteRequest $request): string;
 
     /**
      * @param string $token

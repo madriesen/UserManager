@@ -2,20 +2,16 @@
 
 namespace Tests\Unit\Http\Controllers\Auth\Registration\MemberRequest;
 
+use App\Exceptions\ArgumentNotSetException;
 use App\Exceptions\InvalidEmailException;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
-use MemberRequest;
 use Tests\TestCase;
 
-class MemberRequestControllerTest extends TestCase
+class MemberRequestRepositoryTest extends TestCase
 {
     use RefreshDatabase;
-
-    private string $email_address = 'test@testing.com';
-    private string $name = 'driesen';
-    private string $first_name = 'martijn';
 
     public function setUp(): void
     {
@@ -37,7 +33,7 @@ class MemberRequestControllerTest extends TestCase
      */
     private function _createMemberRequest(array $data): string
     {
-        return MemberRequest::create(new CreateMemberRequestRequest($data));
+        return \MemberRequest::create(new CreateMemberRequestRequest($data));
     }
 
     /** @test */
@@ -45,9 +41,8 @@ class MemberRequestControllerTest extends TestCase
     {
         $this->assertDatabaseMissing('member_requests', ['created_at' => Date::now()]);
         $uuid = $this->_createMemberRequest(['email_address' => $this->email_address]);
-        $this->assertDatabaseMissing('member_requests', ['created_at' => Date::now(), 'uuid' => null]);
+        $this->assertFalse($uuid == null);
         $this->assertDatabaseHas('member_requests', ['uuid' => $uuid]);
-
     }
 
     /** @test */
@@ -61,8 +56,8 @@ class MemberRequestControllerTest extends TestCase
     /** @test */
     public function a_member_request_without_email_address_fails()
     {
-        $this->expectException(InvalidEmailException::class);
-        $response = $this->_createMemberRequest(['name' => $this->name, 'firstname' => $this->first_name]);
+        $this->expectException(ArgumentNotSetException::class);
+        $this->_createMemberRequest(['name' => $this->name, 'firstname' => $this->first_name]);
         $this->assertDatabaseMissing('member_requests', ['name' => $this->name, 'firstname' => $this->first_name]);
     }
 
@@ -82,7 +77,7 @@ class MemberRequestControllerTest extends TestCase
     public function a_second_member_request_with_the_same_email_addresses_not_approved_but_refused_longer_than_two_weeks_ago_passes()
     {
         $uuid1 = $this->_createMemberRequest(['email_address' => $this->email_address]);
-        MemberRequest::refuseByUUID($uuid1);
+        \MemberRequest::refuseByUUID($uuid1);
         $this->assertDatabaseHas('member_requests', ['uuid' => $uuid1, 'refused_at' => Date::now()]);
 
 
@@ -104,7 +99,7 @@ class MemberRequestControllerTest extends TestCase
         $this->withoutEvents();
         $uuid = $this->_createMemberRequest(['email_address' => $this->email_address]);
         $this->assertDatabaseHas('member_requests', ['uuid' => $uuid, 'approved_at' => null]);
-        MemberRequest::approveByUUID($uuid);
+        \MemberRequest::approveByUUID($uuid);
         $this->assertDatabaseHas('member_requests', ['uuid' => $uuid, 'approved_at' => Date::now()]);
     }
 
@@ -114,7 +109,20 @@ class MemberRequestControllerTest extends TestCase
         $this->withoutEvents();
         $uuid = $this->_createMemberRequest(['email_address' => $this->email_address]);
         $this->assertDatabaseHas('member_requests', ['uuid' => $uuid, 'refused_at' => null]);
-        MemberRequest::refuseByUUID($uuid);
+        \MemberRequest::refuseByUUID($uuid);
         $this->assertDatabaseHas('member_requests', ['uuid' => $uuid, 'refused_at' => Date::now()]);
+    }
+
+    /** @test */
+    public function all_member_request_can_be_fetched()
+    {
+        $this->_createMemberRequest(['email_address' => '1' . $this->email_address]);
+        $this->_createMemberRequest(['email_address' => '2' . $this->email_address]);
+        $this->_createMemberRequest(['email_address' => '3' . $this->email_address]);
+
+        $member_requests = \MemberRequest::all()->toArray();
+        $this->assertArrayHasKey('for_email_address', $member_requests[0], '1' . $this->email_address);
+        $this->assertArrayHasKey('for_email_address', $member_requests[1], '2' . $this->email_address);
+        $this->assertArrayHasKey('for_email_address', $member_requests[2], '3' . $this->email_address);
     }
 }

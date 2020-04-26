@@ -9,10 +9,6 @@ class MemberRequestRoutesTest extends TestCase
 {
     use RefreshDatabase;
 
-    private string $email_address = 'test@testing.com';
-    private string $name = 'driesen';
-    private string $first_name = 'martijn';
-
     /** @test */
     public function a_member_request_create_route_exists()
     {

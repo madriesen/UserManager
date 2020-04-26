@@ -17,7 +17,7 @@ class MemberRequest extends Model
     public function format()
     {
         return [
-            'member_request_id' => $this->id,
+            'uuid' => $this->uuid,
             'first_name' => $this->first_name,
             'name' => $this->name,
             'for_email_address' => $this->email->address

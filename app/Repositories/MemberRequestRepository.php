@@ -5,6 +5,7 @@ namespace App\Repositories;
 
 
 use App\Events\MemberRequest as MemberRequestEvent;
+use App\Exceptions\ArgumentNotSetException;
 use App\Exceptions\EmailAlreadyExists;
 use App\Exceptions\InvalidEmailException;
 use App\Exceptions\ModelNotFoundException;
@@ -24,7 +25,7 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     public function create(CreateMemberRequestRequest $request): string
     {
         if (empty($request->email_address))
-            throw new InvalidEmailException('No email address given');
+            throw new ArgumentNotSetException('No email address given');
         if ($this->_chkEmailExists($request->email_address))
             if (Date::now()->diffInDays(\Email::findByAddress($request->email_address)->member_request->refused_at) < 14)
                 throw new InvalidEmailException('Email already exists');
@@ -40,49 +41,22 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
     }
 
     /**
-     * @inheritDoc
+     * @param string $email_address
+     * @return bool
      */
-    public function findByUUID(string $uuid): MemberRequest
+    private function _chkEmailExists(string $email_address): bool
     {
-        return MemberRequest::firstWhere('uuid', $uuid);
+        try {
+            \Email::findByAddress($email_address);
+            return true;
+        } catch (ModelNotFoundException $e) {
+            return false;
+        }
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function approveByUUID(string $uuid): void
+    private function _create(): void
     {
-        $member_request = $this->findByUUID($uuid);
-        $member_request->approved_at = Date::now()->toImmutable()->toDateTimeString();
-        $member_request->save();
-
-        event(new MemberRequestEvent\Approved($member_request->uuid));
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function refuseByUUID(string $uuid): void
-    {
-        $member_request = $this->findByUUID($uuid);
-        $member_request->refused_at = Date::now()->toImmutable();
-        $member_request->save();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function all()
-    {
-        return MemberRequest::all()->map->format();
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function findByEmailAddress(string $address): MemberRequest
-    {
-        return \Email::findByAddress($address)->member_request;
+        $this->member_request = MemberRequest::create();
     }
 
     /**
@@ -112,22 +86,52 @@ class MemberRequestRepository implements MemberRequestRepositoryInterface
         $this->member_request->save();
     }
 
-    private function _create(): void
+    /**
+     * @inheritDoc
+     */
+    public function approveByUUID(string $uuid): void
     {
-        $this->member_request = MemberRequest::create();
+        $member_request = $this->findByUUID($uuid);
+        $member_request->approved_at = Date::now()->toImmutable()->toDateTimeString();
+        $member_request->save();
+
+        event(new MemberRequestEvent\Approved($member_request->uuid));
     }
 
     /**
-     * @param string $email_address
-     * @return bool
+     * @inheritDoc
      */
-    private function _chkEmailExists(string $email_address): bool
+    public function findByUUID(string $uuid): MemberRequest
     {
-        try {
-            \Email::findByAddress($email_address);
-            return true;
-        } catch (ModelNotFoundException $e) {
-            return false;
-        }
+        if (empty(MemberRequest::all()->firstWhere('uuid', $uuid)))
+            throw new ModelNotFoundException('No member request with uuid ' . $uuid);
+
+        return MemberRequest::all()->firstWhere('uuid', $uuid);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function refuseByUUID(string $uuid): void
+    {
+        $member_request = $this->findByUUID($uuid);
+        $member_request->refused_at = Date::now()->toImmutable();
+        $member_request->save();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function all()
+    {
+        return MemberRequest::all()->map->format();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByEmailAddress(string $address): MemberRequest
+    {
+        return \Email::findByAddress($address)->member_request;
     }
 }
