@@ -18,11 +18,11 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::group(['namespace' => 'Auth\Registration\MemberRequest', 'middleware' => 'Api', 'prefix' => 'registration/memberrequest'], function () {
-    Route::post('/create', 'MemberRequestController')->name('memberRequest');
+    Route::post('/create', 'MemberRequestController')->name('member_request');
     Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::post('/approve', ['uses' => 'MemberRequestController@response', 'response' => 'approve'])->name('approveMemberRequest');
-        Route::post('/refuse', ['uses' => 'MemberRequestController@response', 'response' => 'refuse'])->name('refuseMemberRequest');
-        Route::get('/all', 'MemberRequestController@getAll')->name('getAllMemberRequests');
+        Route::post('/approve', ['uses' => 'MemberRequestController@response', 'response' => 'approve'])->name('approve_member_request');
+        Route::post('/refuse', ['uses' => 'MemberRequestController@response', 'response' => 'refuse'])->name('refuse_member_request');
+        Route::get('/all', 'MemberRequestController@getAll')->name('get_all_member_requests');
     });
 });
 

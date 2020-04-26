@@ -3,35 +3,36 @@
 namespace App\Repositories\interfaces;
 
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
-use App\Http\Requests\Api\MemberRequest\ResponseMemberRequest;
 use App\MemberRequest;
+use Exception;
 
 interface MemberRequestRepositoryInterface
 {
     /**
      * @param CreateMemberRequestRequest $request
-     * @return void
+     * existing of email_address, name, first_name
+     * @return string
+     * @throws Exception
      */
-    public function create(CreateMemberRequestRequest $request): void;
+    public function create(CreateMemberRequestRequest $request): string;
 
     /**
-     * @param int $member_request_id
+     * @param string $uuid
      * @return MemberRequest
      */
-    public function findById(int $member_request_id): MemberRequest;
+    public function findByUUID(string $uuid): MemberRequest;
 
     /**
-     * @param int $member_request_id
-     * @param ResponseMemberRequest $request
+     * @param string $uuid
      * @return void
      */
-    public function approveById(int $member_request_id, ResponseMemberRequest $request): void;
+    public function approveByUUID(string $uuid): void;
 
     /**
-     * @param int $member_request_id
+     * @param string $uuid
      * @return void
      */
-    public function refuseById(int $member_request_id): void;
+    public function refuseByUUID(string $uuid): void;
 
     /**
      * @param string $address

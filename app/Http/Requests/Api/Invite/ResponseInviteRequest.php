@@ -24,7 +24,7 @@ class ResponseInviteRequest extends FormRequest
     public function rules()
     {
         return [
-            'invite_id' => 'required|exists:invites,id',
+            'invite_token' => 'required|exists:invites,token',
             'accept', 'decline'
         ];
     }
@@ -37,8 +37,8 @@ class ResponseInviteRequest extends FormRequest
     public function messages()
     {
         return [
-            'invite_id.required' => 'Please, enter a valid invite',
-            'invite_id.exists' => 'Please, enter an existing invite',
+            'invite_token.required' => 'Please, enter a valid invite',
+            'invite_token.exists' => 'Please, enter an existing invite',
         ];
     }
 }

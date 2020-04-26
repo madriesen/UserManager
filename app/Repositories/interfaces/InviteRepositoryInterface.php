@@ -13,22 +13,26 @@ interface InviteRepositoryInterface
     public function createByMemberRequestId(int $member_request_id): void;
 
     /**
-     * @param int $invite_id
-     * @return void
+     * @param string $token
      */
-    public function acceptById(int $invite_id): void;
+    public function acceptByToken(string $token): void;
 
     /**
-     * @param int $invite_id
-     * @return void
+     * @param string $token
      */
-    public function declineById(int $invite_id): void;
+    public function declineByToken(string $token): void;
 
     /**
      * @param int $invite_id
      * @return Invite
      */
     public function findById(int $invite_id): Invite;
+
+    /**
+     * @param string $token
+     * @return Invite
+     */
+    public function findByToken(string $token): Invite;
 
     /**
      * @param string $address

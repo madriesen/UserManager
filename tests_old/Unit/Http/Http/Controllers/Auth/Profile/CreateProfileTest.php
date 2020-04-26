@@ -25,7 +25,7 @@ class CreateProfileTest extends TestCase
         $this->postJson(route('memberRequest'), ['email_address' => 'test@testing.com']);
         $this->withHeaders($this->_headers());
         $this->postJson(route('approveMemberRequest'), ['member_request_id' => \Email::findByAddress('test@testing.com')->first()->member_request->id]);
-        $this->postJson(route('acceptInvite'), ['invite_id' => \Email::findByAddress('test@testing.com')->first()->invite->id]);
+        $this->postJson(route('acceptInvite'), ['invite_token' => \Email::findByAddress('test@testing.com')->first()->invite->token]);
         $this->account_id = \Email::findByAddress('test@testing.com')->account->id;
     }
 

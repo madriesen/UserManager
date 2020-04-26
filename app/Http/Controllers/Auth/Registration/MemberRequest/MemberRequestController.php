@@ -32,7 +32,7 @@ class MemberRequestController extends Controller
      */
     public function response(ResponseMemberRequest $request)
     {
-        $member_request = \MemberRequest::findById($request->member_request_id);
+        $member_request = \MemberRequest::findByUUID($request->member_request_id);
         if ($this->_chkMemberRequestIsInvalid($member_request))
             return Response::error('member_request', 'The request is already responded');
 

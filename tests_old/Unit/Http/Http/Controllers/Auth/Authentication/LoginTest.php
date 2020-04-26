@@ -137,7 +137,7 @@ class LoginTest extends TestCase
 
         $this->withHeaders($this->_headers())->postJson(route('approveMemberRequest'), ['member_request_id' => $this->member_request_id]);
         $this->invite_id = \Invite::findByEmailAddress($this->email_address)->id;
-        $this->postJson(route('acceptInvite'), ['invite_id' => $this->invite_id]);
+        $this->postJson(route('acceptInvite'), ['invite_token' => \Invite::findById($this->invite_id)->token]);
     }
 
     private function _updatePrivateEmailAddress(?string $email_address): void

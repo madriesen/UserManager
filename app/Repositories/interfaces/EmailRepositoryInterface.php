@@ -9,10 +9,10 @@ use App\Email;
 interface EmailRepositoryInterface
 {
     /**
-     * @param int $member_request_id
+     * @param string $uuid
      * @param string $address
      */
-    public function createByMemberRequest(int $member_request_id, string $address): void;
+    public function createByMemberRequest(string $uuid, string $address): void;
 
     /**
      * @param string $address
@@ -43,4 +43,9 @@ interface EmailRepositoryInterface
      * @return Email
      */
     public function findByAccountId(int $account_id): Email;
+
+    /**
+     * @return mixed
+     */
+    public function all();
 }

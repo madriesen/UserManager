@@ -8,6 +8,7 @@ use App\Repositories\AccountTypeRepository;
 use App\Repositories\EmailRepository;
 use App\Repositories\InviteRepository;
 use App\Repositories\MemberRequestRepository;
+use App\Repositories\TokenRepository;
 use App\Repositories\ProfileRepository;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\ServiceProvider;
@@ -51,6 +52,9 @@ class AppServiceProvider extends ServiceProvider
         });
         $this->app->singleton('Profile', function ($app) {
             return new ProfileRepository();
+        });
+        $this->app->singleton('Token', function ($app) {
+            return new TokenRepository();
         });
     }
 }

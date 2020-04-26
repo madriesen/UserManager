@@ -5,15 +5,13 @@ namespace App\Http\Controllers\Auth\Registration\Invite;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Invite\CreateInviteRequest;
 use App\Http\Requests\Api\Invite\ResponseInviteRequest;
-use App\Invite;
-use App\MemberRequest;
 use Illuminate\Support\Facades\Response;
 
 class InviteController extends Controller
 {
     public function __invoke(CreateInviteRequest $request)
     {
-        $member_request = MemberRequest::find($request->member_request_id);
+        $member_request = \MemberRequest::findById($request->member_request_id);
         if ($this->_MemberRequestIsInvalid($member_request))
             return Response::error('member_request', 'Please, enter a valid member request');
 
@@ -24,7 +22,7 @@ class InviteController extends Controller
 
     public function response(ResponseInviteRequest $request)
     {
-        $invite = Invite::find($request->invite_id);
+        $invite = \Invite::findByToken($request->invite_token);
         if ($this->_InviteIsInvalid($invite))
             return Response::error('invite', 'The invite is already responded');
 
@@ -60,9 +58,9 @@ class InviteController extends Controller
     {
         $response = $request->route()->getAction()['response'];
         if ($response === 'accept')
-            \Invite::acceptById($request->invite_id);
+            \Invite::acceptByToken($request->invite_token);
         elseif ($response === 'decline')
-            \Invite::declineById($request->invite_id);
+            \Invite::declineByToken($request->invite_token);
     }
 
     /**

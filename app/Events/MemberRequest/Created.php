@@ -10,18 +10,18 @@ class Created
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $member_request;
-    public $request;
+    public string $uuid;
+    public string $email_address;
 
     /**
      * Create a new event instance.
      *
-     * @param $member_request
-     * @param $request
+     * @param string $uuid
+     * @param string $email_address
      */
-    public function __construct($member_request, $request)
+    public function __construct(string $uuid, string $email_address)
     {
-        $this->member_request = $member_request;
-        $this->request = $request;
+        $this->uuid = $uuid;
+        $this->email_address = $email_address;
     }
 }

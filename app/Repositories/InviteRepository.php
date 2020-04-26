@@ -9,6 +9,7 @@ use App\Exceptions\ModelNotFoundException;
 use App\Invite;
 use App\Repositories\interfaces\InviteRepositoryInterface;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Str;
 
 class InviteRepository implements InviteRepositoryInterface
 {
@@ -20,7 +21,8 @@ class InviteRepository implements InviteRepositoryInterface
     {
         $email = \MemberRequest::findById($member_request_id)->email;
         $invite = Invite::create();
-        $invite->email()->save($email);
+        $this->_setToken($invite, Str::random(32));
+        $this->_setEmail($invite, $email);
 
         event(new InviteEvent\Created($invite->id));
     }
@@ -28,21 +30,21 @@ class InviteRepository implements InviteRepositoryInterface
     /**
      * @inheritDoc
      */
-    public function acceptById(int $invite_id): void
+    public function acceptByToken(string $token): void
     {
-        $invite = $this->findById($invite_id);
+        $invite = $this->findByToken($token);
         $invite->accepted_at = Date::now()->toImmutable();
         $invite->save();
 
-        event(new InviteEvent\Accepted($invite_id));
+        event(new InviteEvent\Accepted($invite->id));
     }
 
     /**
      * @inheritDoc
      */
-    public function declineById(int $invite_id): void
+    public function declineByToken(string $token): void
     {
-        $invite = $this->findById($invite_id);
+        $invite = $this->findByToken($token);
         $invite->declined_at = Date::now()->toImmutable();
         $invite->save();
     }
@@ -80,6 +82,31 @@ class InviteRepository implements InviteRepositoryInterface
         $email = \Email::findByAddress($address);
         if (empty($email->invite)) throw new ModelNotFoundException('No invite found for ' . $address);
         return $email->invite;
+    }
 
+
+    /**
+     * @param string $token
+     * @param Invite $invite
+     */
+    private function _setToken(Invite $invite, string $token): void
+    {
+        $invite->token = $token;
+        $invite->save();
+    }
+
+    /**
+     * @param $invite
+     * @param $email
+     */
+    private function _setEmail($invite, $email): void
+    {
+        $invite->email()->save($email);
+        $invite->save();
+    }
+
+    public function findByToken(string $token): Invite
+    {
+        return Invite::all()->firstWhere('token', $token);
     }
 }

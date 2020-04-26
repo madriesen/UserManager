@@ -64,7 +64,7 @@ The whole application is made with the Laravel 7.0 Framework.
 
 | Route        | Name               | Arguments                          |
 |--------------|--------------------|------------------------------------|
-|`/create`     |accountType         |`title` => required, `description` => required|
+|`/create`     |accountType         |`title` => require, `description` => required|
 |`/update`     |updateAccountType   |`account_type_id` => required, `title`, `description`|
 
 # Contribution

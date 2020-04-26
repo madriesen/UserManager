@@ -24,6 +24,6 @@ class CreateEmail
      */
     public function handle(Created $event)
     {
-        \Email::createByMemberRequest($event->member_request->id, $event->request->email_address);
+        \Email::createByMemberRequest($event->uuid, $event->email_address);
     }
 }

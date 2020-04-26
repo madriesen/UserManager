@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMemberRequestsTable extends Migration
+class CreateTokensTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,12 @@ class CreateMemberRequestsTable extends Migration
      */
     public function up()
     {
-        Schema::create('member_requests', function (Blueprint $table) {
+        Schema::create('tokens', function (Blueprint $table) {
             $table->id();
             $table->string('uuid')->nullable();
-            $table->string('name')->nullable();
-            $table->string('first_name')->nullable();
-            $table->timestamp('approved_at')->nullable();
-            $table->timestamp('refused_at')->nullable();
+            $table->string('token')->nullable();
+            $table->string('action')->nullable();
+            $table->timestamp('used_at')->nullable()->default(null);
             $table->timestamps();
         });
     }
@@ -31,6 +30,6 @@ class CreateMemberRequestsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('member_requests');
+        Schema::dropIfExists('tokens');
     }
 }

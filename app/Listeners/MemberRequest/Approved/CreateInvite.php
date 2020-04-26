@@ -16,6 +16,6 @@ class CreateInvite
     public function handle(Approved $event)
     {
         // InviteRepository -> called trough facade
-        \Invite::createByMemberRequestId($event->member_request->id);
+        \Invite::createByMemberRequestUUID($event->uuid);
     }
 }

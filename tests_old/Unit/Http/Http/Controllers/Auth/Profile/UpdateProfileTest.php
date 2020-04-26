@@ -2,7 +2,6 @@
 
 namespace Tests\Unit\Http\Controllers\Auth\Profile;
 
-use App\Email;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Tests\TestCase;
@@ -24,8 +23,8 @@ class UpdateProfileTest extends TestCase
 
         $this->postJson(route('memberRequest'), ['email_address' => 'test@testing.com']);
         $this->withHeaders($this->_headers());
-        $this->postJson(route('approveMemberRequest'), ['member_request_id' => Email::all()->firstWhere('address', 'test@testing.com')->member_request->id]);
-        $this->postJson(route('acceptInvite'), ['invite_id' => \Email::findByAddress('test@testing.com')->invite->id]);
+        $this->postJson(route('approveMemberRequest'), ['member_request_id' => \Email::findByAddress('test@testing.com')->member_request->id]);
+        $this->postJson(route('acceptInvite'), ['invite_token' => \Email::findByAddress('test@testing.com')->invite->token]);
         $this->account_id = \Email::findByAddress('test@testing.com')->account->id;
         $this->postJson(route('profile'), $this->_initialProfileData());
         $this->profile_id = \Profile::findByName($this->_initialProfileData()['name'])->first()->id;

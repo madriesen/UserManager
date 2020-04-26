@@ -236,7 +236,7 @@ return [
         'Email' => \App\Repositories\Facades\EmailRepositoryFacade::class,
         'Profile' => \App\Repositories\Facades\ProfileRepositoryFacade::class,
         'AccountType' => \App\Repositories\Facades\AccountTypeRepositoryFacade::class,
-
+        'Token' => \App\Repositories\Facades\TokenRepositoryFacade::class,
     ],
 
 ];

@@ -3,6 +3,7 @@
 namespace Tests\Unit\Http\Controllers\Auth\Account;
 
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
+use App\Invite;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
 use Tests\TestCase;
@@ -11,7 +12,8 @@ class CreateAccountTest extends TestCase
 {
     use RefreshDatabase;
 
-    private $invite_id;
+    private Invite $invite;
+    private string $token;
 
     public function setUp(): void
     {
@@ -24,15 +26,15 @@ class CreateAccountTest extends TestCase
         $this->withHeaders($this->_headers());
 
         \MemberRequest::create(new CreateMemberRequestRequest(['email_address' => 'test@testing.com']));
-        \Invite::createByMemberRequestId(\Email::findByAddress('test@testing.com')->first()->member_request->id);
-        $this->invite_id = \Email::findByAddress('test@testing.com')->first()->invite->id;
+        \Invite::createByMemberRequestId(\Email::findByAddress('test@testing.com')->member_request->id);
+        $this->invite = \Email::findByAddress('test@testing.com')->invite;
     }
 
     /** @test */
     public function an_account_can_be_created()
     {
         $this->withoutEvents();
-        \Account::createByInviteId($this->invite_id);
+        \Account::createByInviteId($this->invite->id);
         $this->assertDatabaseHas('accounts', ['created_at' => Date::now()]);
     }
 
@@ -59,7 +61,7 @@ class CreateAccountTest extends TestCase
     {
         $this->withoutEvents();
         $account_id = \Account::getHighestId();
-        $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id + 1]);
+        $response = $this->postJson(route('account'), ['invite_id' => $this->invite->id + 1]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['invite_id' => 'Please, enter a valid invite']]]);
         $this->assertDatabaseMissing('accounts', ['created_at' => Date::now(), 'id' => $account_id + 1]);
@@ -69,7 +71,7 @@ class CreateAccountTest extends TestCase
     public function an_account_creation_with_a_not_yet_responded_invite_id_fails()
     {
         $this->withoutEvents();
-        $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id]);
+        $response = $this->postJson(route('account'), ['invite_id' => $this->invite->id]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['invite' => 'The invite is not yet responded']]]);
     }
@@ -78,8 +80,9 @@ class CreateAccountTest extends TestCase
     public function an_account_creation_with_a_declined_invite_id_fails()
     {
         $this->withoutEvents();
-        \Invite::declineById($this->invite_id);
-        $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id]);
+        $invite = \Invite::findById($this->invite->id);
+        \Invite::declineByToken($invite->token);
+        $response = $this->postJson(route('account'), ['invite_id' => $this->invite->id]);
         $response->assertJsonStructure(['error' => ['message' => []]]);
         $response->assertJson(['error' => ['message' => ['invite' => 'The invite is declined']]]);
     }
@@ -88,12 +91,12 @@ class CreateAccountTest extends TestCase
     public function an_account_creation_with_an_accepted_invite_id_passes()
     {
         $this->withoutEvents();
-        \Invite::acceptById($this->invite_id);
-        $response = $this->postJson(route('account'), ['invite_id' => $this->invite_id]);
+        $invite = \Invite::findById($this->invite->id);
+        \Invite::acceptByToken($this->invite->token);
+        $response = $this->postJson(route('account'), ['invite_id' => $this->invite->id]);
         $response->assertJsonStructure(['success']);
         $this->assertDatabaseHas('accounts', ['created_at' => Date::now()]);
     }
-
 
 
     /**
