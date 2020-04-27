@@ -31,17 +31,6 @@ class InviteRepositoryTest extends TestCase
         $this->assertDatabaseHas('invites', ['created_at' => Date::now()]);
     }
 
-    /**
-     * @return mixed
-     */
-    private function _createInvite(array $data)
-    {
-        $this->withoutEvents();
-        \MemberRequest::approveByUUID($this->member_request_uuid);
-        $uuid = \Invite::createByMemberRequestUUID(new CreateInviteRequest($data));
-        return $uuid;
-    }
-
     /** @test */
     public function an_invite_creation_returns_a_uuid()
     {
@@ -68,5 +57,17 @@ class InviteRepositoryTest extends TestCase
         $this->expectException(InvalidEmailException::class);
         $this->_createInvite(['member_request_uuid' => $this->member_request_uuid]);
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    private function _createInvite(array $data)
+    {
+        $this->withoutEvents();
+        \MemberRequest::approveByUUID($this->member_request_uuid);
+        $uuid = \Invite::createByMemberRequestUUID(new CreateInviteRequest($data));
+        return $uuid;
     }
 }

@@ -26,14 +26,14 @@ Route::group(['namespace' => 'Auth\Registration\MemberRequest', 'middleware' => 
     });
 });
 
-Route::group(['namespace' => 'Auth\Registration\Invite', 'middleware' => 'Api', 'prefix' => 'registration/invite'], function () {
-    Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::post('/create', 'InviteController')->name('invite');
-        Route::post('/accept', ['uses' => 'InviteController@response', 'response' => 'accept'])->name('acceptInvite');
-        Route::post('/decline', ['uses' => 'InviteController@response', 'response' => 'decline'])->name('declineInvite');
-        Route::get('/all', 'InviteController@getAll')->name('getAllInvites');
-    });
-});
+//Route::group(['namespace' => 'Auth\Registration\Invite', 'middleware' => 'Api', 'prefix' => 'registration/invite'], function () {
+//    Route::group(['middleware' => 'auth:sanctum'], function () {
+//        Route::post('/create', 'InviteController')->name('invite');
+//        Route::post('/accept', ['uses' => 'InviteController@response', 'response' => 'accept'])->name('acceptInvite');
+//        Route::post('/decline', ['uses' => 'InviteController@response', 'response' => 'decline'])->name('declineInvite');
+//        Route::get('/all', 'InviteController@getAll')->name('getAllInvites');
+//    });
+//});
 
 Route::group(['namespace' => 'Auth\Account', 'middleware' => 'Api', 'prefix' => 'account'], function () {
     Route::group(['middleware' => 'auth:sanctum'], function () {

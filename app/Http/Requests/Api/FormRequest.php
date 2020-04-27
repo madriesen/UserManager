@@ -2,11 +2,10 @@
 
 namespace App\Http\Requests\Api;
 
-use Illuminate\Http\JsonResponse;
 use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Foundation\Http\FormRequest as LaravelFormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Validation\ValidationException;
 
 abstract class FormRequest extends LaravelFormRequest
 {
@@ -43,7 +42,7 @@ abstract class FormRequest extends LaravelFormRequest
 
 
         throw new HttpResponseException(
-            response()->json(['error' => ['message' => $errormessage[0]]], JsonResponse::HTTP_UNPROCESSABLE_ENTITY)
+            response()->json(['error' => ['message' => $errormessage[0]]], 200)
         );
     }
 }
