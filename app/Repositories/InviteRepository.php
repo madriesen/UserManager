@@ -11,7 +11,6 @@ use App\Exceptions\ModelNotFoundException;
 use App\Http\Requests\Api\Invite\CreateInviteRequest;
 use App\Invite;
 use App\Repositories\interfaces\InviteRepositoryInterface;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Str;
 
 class InviteRepository implements InviteRepositoryInterface
@@ -27,10 +26,10 @@ class InviteRepository implements InviteRepositoryInterface
 
         $this->invite = Invite::create();
         $this->_setUUID();
-        $this->_setToken(Str::random(32));
+//        $this->_setToken(Str::random(32));
         $this->_setEmail($member_request->email);
 
-        event(new InviteEvent\Created($this->invite->id));
+        event(new InviteEvent\Created($this->invite->uuid));
 
         return $this->invite->uuid;
     }
@@ -67,14 +66,6 @@ class InviteRepository implements InviteRepositoryInterface
         $this->invite->uuid = Str::uuid()->toString();
     }
 
-    /**
-     * @param string $token
-     */
-    private function _setToken(string $token): void
-    {
-        $this->invite->token = $token;
-        $this->invite->save();
-    }
 
     /**
      * @param $email
@@ -85,32 +76,6 @@ class InviteRepository implements InviteRepositoryInterface
         $this->invite->save();
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function acceptByToken(string $token): void
-    {
-        $this->invite = $this->findByToken($token);
-        $this->invite->accepted_at = Date::now()->toImmutable();
-        $this->invite->save();
-
-        event(new InviteEvent\Accepted($this->invite->id));
-    }
-
-    public function findByToken(string $token): Invite
-    {
-        return Invite::all()->firstWhere('token', $token);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function declineByToken(string $token): void
-    {
-        $invite = $this->findByToken($token);
-        $invite->declined_at = Date::now()->toImmutable();
-        $invite->save();
-    }
 
     /**
      * @inheritDoc
@@ -145,5 +110,29 @@ class InviteRepository implements InviteRepositoryInterface
         $email = \Email::findByAddress($address);
         if (empty($email->invite)) throw new ModelNotFoundException('No invite found for ' . $address);
         return $email->invite;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function acceptByUUID(string $uuid): void
+    {
+        // TODO: Implement acceptByUUID() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function declineByUUID(string $uuid): void
+    {
+        // TODO: Implement declineByUUID() method.
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function findByUUID(string $uuid): Invite
+    {
+        return Invite::all()->firstWhere('uuid', $uuid);
     }
 }

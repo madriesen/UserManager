@@ -1,5 +1,6 @@
 <?php
 
+use App\Mail\InviteMail;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -60,5 +61,11 @@ Route::group(['namespace' => 'Auth\Account', 'middleware' => 'Api', 'prefix' => 
         Route::post('/create', 'AccountTypesController')->name('accountType');
         Route::post('/update', 'AccountTypesController@update')->name('updateAccountType');
     });
+});
+
+
+Route::get('/email', function () {
+//    Mail::to('test@testmail.be')->send(new InviteMail('test_uuid'));
+    return new InviteMail('test_uuid');
 });
 

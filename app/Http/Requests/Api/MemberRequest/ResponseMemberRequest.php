@@ -24,7 +24,7 @@ class ResponseMemberRequest extends FormRequest
     public function rules()
     {
         return [
-            'member_request_id' => 'required|exists:member_requests,id',
+            'member_request_uuid' => 'required|exists:member_requests,uuid',
             'response',
         ];
     }
@@ -37,8 +37,8 @@ class ResponseMemberRequest extends FormRequest
     public function messages()
     {
         return [
-            'member_request_id.required' => 'Please, enter a valid member request id',
-            'member_request_id.exists' => 'Please, enter an existing member request id',
+            'member_request_uuid.required' => 'Please, enter a valid member request uuid',
+            'member_request_uuid.exists' => 'Please, enter an existing member request uuid',
         ];
     }
 
@@ -50,7 +50,7 @@ class ResponseMemberRequest extends FormRequest
     public function filters()
     {
         return [
-            'member_request_id' => 'trim',
+            'member_request_uuid' => 'trim',
         ];
     }
 

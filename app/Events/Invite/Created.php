@@ -10,16 +10,16 @@ class Created
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public int $invite_id;
+    public string $invite_uuid;
 
     /**
      * Create a new event instance.
      *
-     * @param int $invite_id
+     * @param string $invite_uuid
      */
-    public function __construct(int $invite_id)
+    public function __construct(string $invite_uuid)
     {
-        $this->invite_id = $invite_id;
+        $this->invite_uuid = $invite_uuid;
     }
 
 }

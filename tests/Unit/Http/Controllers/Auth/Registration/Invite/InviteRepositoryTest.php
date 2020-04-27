@@ -6,8 +6,10 @@ use App\Exceptions\ArgumentNotSetException;
 use App\Exceptions\InvalidEmailException;
 use App\Http\Requests\Api\Invite\CreateInviteRequest;
 use App\Http\Requests\Api\MemberRequest\CreateMemberRequestRequest;
+use App\Mail\InviteMail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Date;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class InviteRepositoryTest extends TestCase
@@ -29,6 +31,18 @@ class InviteRepositoryTest extends TestCase
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
         $this->_createInvite(['member_request_uuid' => $this->member_request_uuid]);
         $this->assertDatabaseHas('invites', ['created_at' => Date::now()]);
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    private function _createInvite(array $data)
+    {
+        $this->withoutEvents();
+        \MemberRequest::approveByUUID($this->member_request_uuid);
+        $uuid = \Invite::createByMemberRequestUUID(new CreateInviteRequest($data));
+        return $uuid;
     }
 
     /** @test */
@@ -59,15 +73,23 @@ class InviteRepositoryTest extends TestCase
         $this->assertDatabaseMissing('invites', ['created_at' => Date::now()]);
     }
 
-    /**
-     * @param array $data
-     * @return mixed
-     */
-    private function _createInvite(array $data)
+    /** @test */
+    public function a_member_request_approval_creates_an_invite()
     {
-        $this->withoutEvents();
         \MemberRequest::approveByUUID($this->member_request_uuid);
-        $uuid = \Invite::createByMemberRequestUUID(new CreateInviteRequest($data));
-        return $uuid;
+        $this->assertDatabaseHas('invites', ['created_at' => Date::now()]);
+    }
+
+    /** @test */
+    public function an_invite_creation_sends_mail_to_email_address()
+    {
+        Mail::assertNothingSent();
+        \MemberRequest::approveByUUID($this->member_request_uuid);
+        $uuid = \Email::findByAddress($this->email_address)->invite->uuid;
+        Mail::assertSent(InviteMail::class, function ($mail) use ($uuid) {
+
+            return $mail->hasTo($this->email_address) &&
+                $mail->url = env('app.url') . '/api/accept_invite/' . $uuid;
+        });
     }
 }

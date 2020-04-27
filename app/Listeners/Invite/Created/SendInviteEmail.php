@@ -3,8 +3,7 @@
 namespace App\Listeners\Invite\Created;
 
 use App\Events\Invite\Created;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Mail\InviteMail;
 use Illuminate\Support\Facades\Mail;
 
 class SendInviteEmail
@@ -27,6 +26,7 @@ class SendInviteEmail
      */
     public function handle(Created $event)
     {
-        //send email
+        $email_address = \Invite::findByUUID($event->invite_uuid)->email->address;
+        Mail::to($email_address)->send(new InviteMail($event->invite_uuid));
     }
 }

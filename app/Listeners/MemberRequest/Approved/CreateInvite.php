@@ -3,6 +3,7 @@
 namespace App\Listeners\MemberRequest\Approved;
 
 use App\Events\MemberRequest\Approved;
+use App\Http\Requests\Api\Invite\CreateInviteRequest;
 
 
 class CreateInvite
@@ -15,7 +16,6 @@ class CreateInvite
      */
     public function handle(Approved $event)
     {
-        // InviteRepository -> called trough facade
-        \Invite::createByMemberRequestUUID($event->uuid);
+        \Invite::createByMemberRequestUUID(new CreateInviteRequest(['member_request_uuid' => $event->uuid]));
     }
 }
