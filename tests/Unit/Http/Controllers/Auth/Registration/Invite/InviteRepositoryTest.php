@@ -87,9 +87,9 @@ class InviteRepositoryTest extends TestCase
         \MemberRequest::approveByUUID($this->member_request_uuid);
         $uuid = \Email::findByAddress($this->email_address)->invite->uuid;
         Mail::assertSent(InviteMail::class, function ($mail) use ($uuid) {
-
-            return $mail->hasTo($this->email_address) &&
-                $mail->url = env('app.url') . '/api/accept_invite/' . $uuid;
+            return
+                $mail->hasTo($this->email_address) &&
+                $mail->getUrl() == env('app.url') . '/api/accept_invite/' . $uuid;
         });
     }
 }

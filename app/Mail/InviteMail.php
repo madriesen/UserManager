@@ -10,7 +10,7 @@ class InviteMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    public string $url;
+    protected string $url;
 
     /**
      * Create a new message instance.
@@ -20,6 +20,14 @@ class InviteMail extends Mailable
     public function __construct(string $uuid)
     {
         $this->url = env('app.url') . '/api/accept_invite/' . $uuid;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        return $this->url;
     }
 
     /**
